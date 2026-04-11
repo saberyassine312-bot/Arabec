@@ -106,10 +106,11 @@ const questions: Question[] = [
   }
 ];
 
-export default function NominalSentenceExam() {
+export default function NominalSentenceExam({ onComplete }: { onComplete?: (result: any) => void }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [errors, setErrors] = useState(0);
+  const [wrongAnswers, setWrongAnswers] = useState<string[]>([]);
   const [showResult, setShowResult] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -124,6 +125,7 @@ export default function NominalSentenceExam() {
       setScore(prev => prev + 1);
     } else {
       setErrors(prev => prev + 1);
+      setWrongAnswers(prev => [...prev, questions[currentQuestion].text]);
     }
   };
 
@@ -134,6 +136,14 @@ export default function NominalSentenceExam() {
       setIsCorrect(null);
     } else {
       setShowResult(true);
+      if (onComplete) {
+        onComplete({
+          score: `${score} من ${questions.length}`,
+          wrongAnswers,
+          totalQuestions: questions.length,
+          correctCount: score
+        });
+      }
     }
   };
 
@@ -141,6 +151,7 @@ export default function NominalSentenceExam() {
     setCurrentQuestion(0);
     setScore(0);
     setErrors(0);
+    setWrongAnswers([]);
     setShowResult(false);
     setSelectedOption(null);
     setIsCorrect(null);
@@ -215,7 +226,7 @@ export default function NominalSentenceExam() {
                   </h3>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {questions[currentQuestion].options.map((option, index) => {
                     let bgColor = "bg-gray-50 hover:bg-amber-50 border-gray-200 hover:border-amber-200";
                     let textColor = "text-gray-700";

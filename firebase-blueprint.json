@@ -10,57 +10,126 @@
         "email": { "type": "string", "description": "User's email address" },
         "role": { "type": "string", "enum": ["student", "teacher", "admin"], "description": "User's role in the platform" },
         "points": { "type": "number", "description": "Total points earned by the user" },
-        "progress": { "type": "object", "description": "Map of lesson IDs to completion status" },
         "createdAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp" }
       },
       "required": ["uid", "email", "role"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "A collection of modules and lessons",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Course title" },
+        "description": { "type": "string", "description": "Course description" },
+        "thumbnail": { "type": "string", "description": "Course thumbnail URL" },
+        "level": { "type": "string", "enum": ["beginner", "intermediate", "advanced"], "description": "Difficulty level" },
+        "duration": { "type": "string", "description": "Estimated duration (e.g., '4 weeks')" },
+        "teacherId": { "type": "string", "description": "UID of the teacher" },
+        "rating": { "type": "number", "description": "Average rating" },
+        "enrolledCount": { "type": "number", "description": "Number of students enrolled" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "level", "teacherId"]
+    },
+    "Module": {
+      "title": "Module",
+      "description": "A unit within a course",
+      "type": "object",
+      "properties": {
+        "courseId": { "type": "string", "description": "ID of the parent course" },
+        "title": { "type": "string", "description": "Module title" },
+        "order": { "type": "number", "description": "Order within the course" }
+      },
+      "required": ["courseId", "title", "order"]
     },
     "Lesson": {
       "title": "Lesson",
       "description": "Educational content for Arabic learning",
       "type": "object",
       "properties": {
+        "courseId": { "type": "string", "description": "ID of the parent course" },
+        "moduleId": { "type": "string", "description": "ID of the parent module" },
         "title": { "type": "string", "description": "Lesson title" },
         "content": { "type": "string", "description": "Markdown content or video URL" },
         "type": { "type": "string", "enum": ["text", "video"], "description": "Type of lesson content" },
-        "category": { "type": "string", "enum": ["grammar", "vocabulary", "spelling", "other"], "description": "Lesson category (نحو، صرف، إملاء...)" },
-        "level": { "type": "string", "enum": ["beginner", "intermediate", "advanced"], "description": "Difficulty level" },
-        "order": { "type": "number", "description": "Order of the lesson in the curriculum" },
-        "teacherId": { "type": "string", "description": "UID of the teacher who created the lesson" }
+        "order": { "type": "number", "description": "Order within the module" }
       },
-      "required": ["title", "content", "type", "category", "level"]
+      "required": ["courseId", "moduleId", "title", "content", "type", "order"]
     },
-    "Exercise": {
-      "title": "Exercise",
-      "description": "Interactive quiz questions",
+    "Enrollment": {
+      "title": "Enrollment",
+      "description": "Student's progress in a course",
       "type": "object",
       "properties": {
-        "lessonId": { "type": "string", "description": "ID of the associated lesson" },
-        "question": { "type": "string", "description": "The question text" },
-        "options": { "type": "array", "description": "List of possible answers" },
-        "correctAnswer": { "type": "number", "description": "Index of the correct answer in the options array" },
-        "points": { "type": "number", "description": "Points awarded for correct answer" }
+        "userId": { "type": "string", "description": "UID of the student" },
+        "courseId": { "type": "string", "description": "ID of the course" },
+        "progress": { "type": "number", "description": "Percentage of completion (0-100)" },
+        "completedLessons": { "type": "array", "description": "List of completed lesson IDs" },
+        "status": { "type": "string", "enum": ["enrolled", "completed"] },
+        "enrolledAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["question", "options", "correctAnswer", "points"]
+      "required": ["userId", "courseId", "progress", "status"]
     },
-    "LiveSession": {
-      "title": "Live Session",
-      "description": "Information about scheduled live classes",
+    "Certificate": {
+      "title": "Certificate",
+      "description": "Course completion certificate",
       "type": "object",
       "properties": {
-        "title": { "type": "string", "description": "Session title" },
-        "startTime": { "type": "string", "format": "date-time", "description": "Scheduled start time" },
-        "meetingUrl": { "type": "string", "description": "Google Meet or Jitsi link" },
-        "status": { "type": "string", "enum": ["scheduled", "live", "ended"], "description": "Current status of the session" },
-        "teacherId": { "type": "string", "description": "UID of the teacher conducting the session" }
+        "userId": { "type": "string" },
+        "courseId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "courseTitle": { "type": "string" },
+        "issueDate": { "type": "string", "format": "date-time" },
+        "certificateId": { "type": "string" }
       },
-      "required": ["title", "startTime", "meetingUrl", "status"]
+      "required": ["userId", "courseId", "studentName", "courseTitle", "issueDate", "certificateId"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Course reviews and comments",
+      "type": "object",
+      "properties": {
+        "courseId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "text": { "type": "string" },
+        "rating": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["courseId", "userId", "text", "createdAt"]
+    },
+    "QuizAttempt": {
+      "title": "Quiz Attempt",
+      "description": "Data from a student's quiz attempt",
+      "type": "object",
+      "properties": {
+        "studentData": {
+          "type": "object",
+          "properties": {
+            "firstName": { "type": "string" },
+            "lastName": { "type": "string" },
+            "level": { "type": "string" },
+            "section": { "type": "string" },
+            "number": { "type": "string" }
+          }
+        },
+        "quizType": { "type": "string" },
+        "quizId": { "type": "string" },
+        "score": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["studentData", "quizType", "score", "timestamp"]
     }
   },
   "firestore": {
     "/users/{uid}": { "schema": "User", "description": "User profiles" },
-    "/lessons/{lessonId}": { "schema": "Lesson", "description": "Educational lessons" },
-    "/lessons/{lessonId}/exercises/{exerciseId}": { "schema": "Exercise", "description": "Exercises for a specific lesson" },
-    "/liveSessions/{sessionId}": { "schema": "LiveSession", "description": "Live class sessions" }
+    "/courses/{courseId}": { "schema": "Course", "description": "Courses" },
+    "/courses/{courseId}/modules/{moduleId}": { "schema": "Module", "description": "Modules within a course" },
+    "/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}": { "schema": "Lesson", "description": "Lessons within a module" },
+    "/enrollments/{enrollmentId}": { "schema": "Enrollment", "description": "Student enrollments" },
+    "/certificates/{certificateId}": { "schema": "Certificate", "description": "Issued certificates" },
+    "/comments/{commentId}": { "schema": "Comment", "description": "Course comments" },
+    "/quizAttempts/{attemptId}": { "schema": "QuizAttempt", "description": "Quiz attempts and results" }
   }
 }

@@ -8,10 +8,11 @@ import { useState, useEffect } from 'react';
 import { auth, db } from './lib/firebase';
 import { onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { BookOpen, Play, CheckCircle, User, LogIn, LogOut, Layout, Video, Award, Menu, X, ChevronDown, ArrowRight, Clock, Target, GraduationCap, AlertCircle, Sun, Star, Lightbulb, Layers, BookCheck, Sparkles, Compass } from 'lucide-react';
+import { BookOpen, Play, CheckCircle, User, LogIn, LogOut, Layout, Video, Award, Menu, X, ChevronDown, ArrowRight, Clock, Target, GraduationCap, AlertCircle, Sun, Star, Lightbulb, Layers, BookCheck, Sparkles, Compass, Type, PenTool, Scale, Wind, History, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from './lib/utils';
 
+import { seedDatabase } from './lib/seed';
 import QuizGame from './components/QuizGame';
 import VerbalSentenceQuiz from './components/VerbalSentenceQuiz';
 import VerbTypesQuiz from './components/VerbTypesQuiz';
@@ -28,6 +29,24 @@ import ParsingLesson from './components/ParsingLesson';
 import FirstYearDropdown from './components/FirstYearDropdown';
 import SecondYearDropdown from './components/SecondYearDropdown';
 import ThirdYearDropdown from './components/ThirdYearDropdown';
+import SunMoonLesson from './components/SunMoonLesson';
+import TaMarbutaLesson from './components/TaMarbutaLesson';
+import HamzaLesson from './components/HamzaLesson';
+import AlifAfterWawLesson from './components/AlifAfterWawLesson';
+import MorphologicalScaleLesson from './components/MorphologicalScaleLesson';
+import VerbClassificationLesson from './components/VerbClassificationLesson';
+import PastTenseVerbLesson from './components/PastTenseVerbLesson';
+import PresentTenseVerbLesson from './components/PresentTenseVerbLesson';
+import ImperativeVerbLesson from './components/ImperativeVerbLesson';
+import GoogleMeetGuide from './components/GoogleMeetGuide';
+import { CourseList } from './components/CourseList';
+import { CourseCard } from './components/CourseCard';
+import { CourseDetail } from './components/CourseDetail';
+import { LessonPlayer } from './components/LessonPlayer';
+import { CertificateView } from './components/CertificateView';
+import { IntelligenceTest } from './components/IntelligenceTest';
+import { QuizRegistration } from './components/QuizRegistration';
+import { TeacherDashboard } from './components/TeacherDashboard';
 
 // Components
 const Navbar = ({ user, loading }: { user: any; loading: boolean }) => {
@@ -58,6 +77,7 @@ const Navbar = ({ user, loading }: { user: any; loading: boolean }) => {
 
   const prepLevels = ['السنة الأولى', 'السنة الثانية', 'السنة الثالثة'];
   const secondaryLevels = ['جدع مشترك', 'الأولى بكالوريا', 'الثانية بكالوريا'];
+  const isTeacher = user?.email === 'wadifamaroc60@gmail.com';
 
   return (
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
@@ -135,9 +155,10 @@ const Navbar = ({ user, loading }: { user: any; loading: boolean }) => {
               </AnimatePresence>
             </div>
 
+            <Link to="/courses" className="text-gray-600 hover:text-emerald-600 transition-colors font-bold">الدورات</Link>
             <Link to="/exercises" className="text-gray-600 hover:text-emerald-600 transition-colors">التمارين</Link>
-            <Link to="/live" className="text-gray-600 hover:text-emerald-600 transition-colors">حصص مباشرة</Link>
-            {user && <Link to="/dashboard" className="text-gray-600 hover:text-emerald-600 transition-colors">لوحة التحكم</Link>}
+            <a href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-emerald-600 transition-colors">حصص مباشرة</a>
+            {isTeacher && <Link to="/dashboard" className="text-emerald-600 hover:text-emerald-700 transition-colors font-bold">لوحة التحكم</Link>}
           </div>
 
           <div className="hidden md:flex items-center gap-6">
@@ -193,7 +214,8 @@ const Navbar = ({ user, loading }: { user: any; loading: boolean }) => {
                 ))}
               </div>
               <Link to="/exercises" className="block px-3 py-2 text-gray-600 hover:bg-emerald-50 rounded-lg border-t border-gray-50">التمارين</Link>
-              <Link to="/live" className="block px-3 py-2 text-gray-600 hover:bg-emerald-50 rounded-lg">حصص مباشرة</Link>
+              <a href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer" className="block px-3 py-2 text-gray-600 hover:bg-emerald-50 rounded-lg">حصص مباشرة</a>
+              {isTeacher && <Link to="/dashboard" className="block px-3 py-2 text-emerald-600 font-bold hover:bg-emerald-50 rounded-lg">لوحة التحكم</Link>}
               {!user && (
                 <button onClick={handleLogin} className="w-full text-right px-3 py-2 text-emerald-600 font-bold border-t border-gray-50">تسجيل الدخول</button>
               )}
@@ -207,6 +229,11 @@ const Navbar = ({ user, loading }: { user: any; loading: boolean }) => {
 
 const Home = () => (
   <div className="space-y-20 pb-20">
+    <QuizRegistration quizTitle="اختبار الذكاءات المتعددة" quizType="ذكاءات متعددة">
+      {(studentData, onComplete) => (
+        <IntelligenceTest onComplete={(results) => onComplete(results)} />
+      )}
+    </QuizRegistration>
     <section className="relative pt-20 pb-32 overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full opacity-10 pointer-events-none">
         <div className="absolute top-10 right-10 w-64 h-64 bg-emerald-400 rounded-full blur-3xl"></div>
@@ -236,30 +263,86 @@ const Home = () => (
           transition={{ delay: 0.2 }}
           className="flex flex-wrap justify-center gap-4"
         >
-          <Link to="/lessons" className="bg-emerald-600 text-white px-8 py-4 rounded-2xl text-lg font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200">ابدأ التعلم الآن</Link>
-          <Link to="/live" className="bg-white text-gray-900 border border-gray-200 px-8 py-4 rounded-2xl text-lg font-bold hover:bg-gray-50 transition-all">استكشف الحصص المباشرة</Link>
+          <Link to="/courses" className="bg-emerald-600 text-white px-8 py-4 rounded-2xl text-lg font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200">ابدأ التعلم الآن</Link>
+          <a href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer" className="bg-white text-gray-900 border border-gray-200 px-8 py-4 rounded-2xl text-lg font-bold hover:bg-gray-50 transition-all">استكشف الحصص المباشرة</a>
         </motion.div>
       </div>
     </section>
 
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="grid md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
         {[
-          { icon: <BookOpen className="text-emerald-600" />, title: "دروس شاملة", desc: "محتوى تعليمي غني يغطي النحو والصرف والإملاء لكل المستويات.", link: "/lessons" },
-          { icon: <Play className="text-blue-600" />, title: "تمارين تفاعلية", desc: "تعلم بأسلوب اللعب مع نظام نقاط وتحديات تجعل الدراسة ممتعة.", link: "/exercises" },
-          { icon: <Video className="text-purple-600" />, title: "بث مباشر", desc: "تواصل مباشرة مع المعلمين واطرح أسئلتك في حصص تفاعلية.", link: "/live" }
+          { icon: <BookOpen className="text-emerald-600" />, title: "دورات تدريبية", desc: "مسارات تعليمية متكاملة تبدأ معك من الصفر حتى الاحتراف مع شهادات معتمدة.", link: "/courses", external: false },
+          { icon: <Play className="text-blue-600" />, title: "تمارين تفاعلية", desc: "تعلم بأسلوب اللعب مع نظام نقاط وتحديات تجعل الدراسة ممتعة.", link: "/exercises", external: false },
+          { icon: <Video className="text-purple-600" />, title: "بث مباشر", desc: "تواصل مباشرة مع المعلمين واطرح أسئلتك في حصص تفاعلية.", link: "https://meet.google.com/new", external: true }
         ].map((feature, i) => (
-          <Link to={feature.link} key={i}>
-            <motion.div 
-              whileHover={{ y: -5 }}
-              className="p-8 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all h-full"
-            >
-              <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-6">{feature.icon}</div>
-              <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-              <p className="text-gray-600 leading-relaxed">{feature.desc}</p>
-            </motion.div>
-          </Link>
+          feature.external ? (
+            <a href={feature.link} key={i} target="_blank" rel="noopener noreferrer">
+              <motion.div 
+                whileHover={{ y: -5 }}
+                className="p-8 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all h-full"
+              >
+                <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-6">{feature.icon}</div>
+                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{feature.desc}</p>
+              </motion.div>
+            </a>
+          ) : (
+            <Link to={feature.link} key={i}>
+              <motion.div 
+                whileHover={{ y: -5 }}
+                className="p-8 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all h-full"
+              >
+                <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-6">{feature.icon}</div>
+                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{feature.desc}</p>
+              </motion.div>
+            </Link>
+          )
         ))}
+      </div>
+    </section>
+
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="flex items-center justify-between mb-12">
+        <div>
+          <h2 className="text-3xl font-black text-gray-900 mb-2">دوراتنا المميزة</h2>
+          <p className="text-gray-500">اختر من بين أفضل الدورات التعليمية المصممة بعناية</p>
+        </div>
+        <Link to="/courses" className="text-emerald-600 font-bold flex items-center gap-2 hover:gap-3 transition-all">
+          <span>عرض كل الدورات</span>
+          <ArrowRight size={20} />
+        </Link>
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <CourseCard 
+          id="grammar-basics"
+          title="أساسيات النحو العربي"
+          description="دورة شاملة تغطي أساسيات النحو من المبتدئ إلى المتوسط."
+          level="beginner"
+          duration="4 أسابيع"
+          rating={4.9}
+          enrolledCount={1250}
+        />
+        <CourseCard 
+          id="spelling-mastery"
+          title="إتقان الإملاء والكتابة"
+          description="تعلم قواعد الهمزة والألف الفارقة وكل ما يخص الكتابة الصحيحة."
+          level="beginner"
+          duration="3 أسابيع"
+          rating={4.8}
+          enrolledCount={850}
+        />
+        <CourseCard 
+          id="advanced-parsing"
+          title="فن الإعراب للمتقدمين"
+          description="تعمق في أسرار الإعراب وتحليل الجمل المعقدة في اللغة العربية."
+          level="advanced"
+          duration="6 أسابيع"
+          rating={5.0}
+          enrolledCount={420}
+        />
       </div>
     </section>
   </div>
@@ -275,19 +358,89 @@ const Lessons = () => {
     </div>
   );
 
+  if (selectedLesson === 'sun-moon') return (
+    <div className="relative">
+      <button onClick={() => setSelectedLesson(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للمكتبة</button>
+      <SunMoonLesson />
+    </div>
+  );
+
+  if (selectedLesson === 'ta-marbuta') return (
+    <div className="relative">
+      <button onClick={() => setSelectedLesson(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للمكتبة</button>
+      <TaMarbutaLesson />
+    </div>
+  );
+
+  if (selectedLesson === 'hamza') return (
+    <div className="relative">
+      <button onClick={() => setSelectedLesson(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للمكتبة</button>
+      <HamzaLesson />
+    </div>
+  );
+
+  if (selectedLesson === 'alif-after-waw') return (
+    <div className="relative">
+      <button onClick={() => setSelectedLesson(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للمكتبة</button>
+      <AlifAfterWawLesson />
+    </div>
+  );
+
+  if (selectedLesson === 'morphological-scale') return (
+    <div className="relative">
+      <button onClick={() => setSelectedLesson(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للمكتبة</button>
+      <MorphologicalScaleLesson />
+    </div>
+  );
+
+  if (selectedLesson === 'verb-classification') return (
+    <div className="relative">
+      <button onClick={() => setSelectedLesson(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للمكتبة</button>
+      <VerbClassificationLesson />
+    </div>
+  );
+
+  if (selectedLesson === 'past-tense-verb') return (
+    <div className="relative">
+      <button onClick={() => setSelectedLesson(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للمكتبة</button>
+      <PastTenseVerbLesson />
+    </div>
+  );
+
+  if (selectedLesson === 'present-tense-verb') return (
+    <div className="relative">
+      <button onClick={() => setSelectedLesson(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للمكتبة</button>
+      <PresentTenseVerbLesson />
+    </div>
+  );
+
+  if (selectedLesson === 'imperative-verb') return (
+    <div className="relative">
+      <button onClick={() => setSelectedLesson(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للمكتبة</button>
+      <ImperativeVerbLesson />
+    </div>
+  );
+
+  if (selectedLesson === 'google-meet-guide') return (
+    <div className="relative">
+      <button onClick={() => setSelectedLesson(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للمكتبة</button>
+      <GoogleMeetGuide />
+    </div>
+  );
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="mb-20">
-        <h2 className="text-3xl font-bold mb-10 text-center">اختر مستواك الدراسي (السلك الإعدادي)</h2>
-        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-bold mb-10 text-center px-4">اختر مستواك الدراسي (السلك الإعدادي)</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           <FirstYearDropdown />
           <SecondYearDropdown />
           <ThirdYearDropdown />
         </div>
       </div>
 
-      <h2 className="text-3xl font-bold mb-8">مكتبة الدروس العامة</h2>
-      <div className="grid md:grid-cols-4 gap-6">
+      <h2 className="text-2xl md:text-3xl font-bold mb-8 px-4">مكتبة الدروس العامة</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Categories Sidebar */}
         <div className="md:col-span-1 space-y-4">
           <div className="bg-white p-6 rounded-2xl border border-gray-100">
@@ -301,6 +454,106 @@ const Lessons = () => {
         </div>
         {/* Lessons Grid */}
         <div className="md:col-span-3 grid sm:grid-cols-2 gap-6">
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
+            <div className="h-40 bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+              <MessageSquare size={48} className="text-orange-200" />
+            </div>
+            <div className="p-6">
+              <div className="flex gap-2 mb-3">
+                <span className="text-xs font-bold px-2 py-1 bg-orange-100 text-orange-700 rounded-md">مبتدئ</span>
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">نحو</span>
+              </div>
+              <h4 className="font-bold text-lg mb-2">📌 فعل الأمر وإعرابه</h4>
+              <p className="text-sm text-gray-500 mb-4">تعلم حالات بناء فعل الأمر (السكون، حذف النون) مع نماذج إعرابية تطبيقية شاملة...</p>
+              <button 
+                onClick={() => setSelectedLesson('imperative-verb')}
+                className="w-full py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-orange-600 transition-colors"
+              >
+                ابدأ الدرس
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
+            <div className="h-40 bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+              <Clock size={48} className="text-blue-200" />
+            </div>
+            <div className="p-6">
+              <div className="flex gap-2 mb-3">
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">مبتدئ</span>
+                <span className="text-xs font-bold px-2 py-1 bg-amber-100 text-amber-700 rounded-md">نحو</span>
+              </div>
+              <h4 className="font-bold text-lg mb-2">📌 الفعل المضارع وإعرابه</h4>
+              <p className="text-sm text-gray-500 mb-4">تعلم حالات الرفع والنصب والجزم للمضارع مع نماذج إعرابية تطبيقية شاملة...</p>
+              <button 
+                onClick={() => setSelectedLesson('present-tense-verb')}
+                className="w-full py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-blue-600 transition-colors"
+              >
+                ابدأ الدرس
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
+            <div className="h-40 bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+              <History size={48} className="text-indigo-200" />
+            </div>
+            <div className="p-6">
+              <div className="flex gap-2 mb-3">
+                <span className="text-xs font-bold px-2 py-1 bg-indigo-100 text-indigo-700 rounded-md">مبتدئ</span>
+                <span className="text-xs font-bold px-2 py-1 bg-amber-100 text-amber-700 rounded-md">نحو</span>
+              </div>
+              <h4 className="font-bold text-lg mb-2">📌 الفعل الماضي وإعرابه</h4>
+              <p className="text-sm text-gray-500 mb-4">اكتشف حالات بناء الفعل الماضي وكيفية إعرابه مع الضمائر المختلفة بأسلوب مبسط...</p>
+              <button 
+                onClick={() => setSelectedLesson('past-tense-verb')}
+                className="w-full py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-indigo-600 transition-colors"
+              >
+                ابدأ الدرس
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
+            <div className="h-40 bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+              <Wind size={48} className="text-blue-200" />
+            </div>
+            <div className="p-6">
+              <div className="flex gap-2 mb-3">
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">مبتدئ</span>
+                <span className="text-xs font-bold px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md">صرف</span>
+              </div>
+              <h4 className="font-bold text-lg mb-2">📌 الصحيح والمعتل</h4>
+              <p className="text-sm text-gray-500 mb-4">تعلم كيفية تصنيف الأفعال إلى صحيحة ومعتلة ومعرفة أنواع كل منهما بوضوح...</p>
+              <button 
+                onClick={() => setSelectedLesson('verb-classification')}
+                className="w-full py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-blue-600 transition-colors"
+              >
+                ابدأ الدرس
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
+            <div className="h-40 bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+              <Scale size={48} className="text-emerald-200" />
+            </div>
+            <div className="p-6">
+              <div className="flex gap-2 mb-3">
+                <span className="text-xs font-bold px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md">مبتدئ</span>
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">صرف</span>
+              </div>
+              <h4 className="font-bold text-lg mb-2">⚖️ الميزان الصرفي</h4>
+              <p className="text-sm text-gray-500 mb-4">تعرف على كيفية وزن الكلمات العربية ومعرفة أصولها وزوائدها بأسلوب مبسط...</p>
+              <button 
+                onClick={() => setSelectedLesson('morphological-scale')}
+                className="w-full py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-colors"
+              >
+                ابدأ الدرس
+              </button>
+            </div>
+          </div>
+
           <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
             <div className="h-40 bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
               <BookOpen size={48} className="text-emerald-200" />
@@ -321,7 +574,107 @@ const Lessons = () => {
             </div>
           </div>
 
-          {[2, 3, 4].map(i => (
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
+            <div className="h-40 bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+              <Sun size={48} className="text-amber-200" />
+            </div>
+            <div className="p-6">
+              <div className="flex gap-2 mb-3">
+                <span className="text-xs font-bold px-2 py-1 bg-amber-100 text-amber-700 rounded-md">مبتدئ</span>
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">إملاء</span>
+              </div>
+              <h4 className="font-bold text-lg mb-2">☀️ اللام الشمسية والقمرية</h4>
+              <p className="text-sm text-gray-500 mb-4">تعلم كيفية التمييز بين اللام الشمسية والقمرية بسهولة مع أمثلة وتمارين...</p>
+              <button 
+                onClick={() => setSelectedLesson('sun-moon')}
+                className="w-full py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-amber-600 transition-colors"
+              >
+                ابدأ الدرس
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
+            <div className="h-40 bg-rose-50 flex items-center justify-center group-hover:bg-rose-100 transition-colors">
+              <Type size={48} className="text-rose-200" />
+            </div>
+            <div className="p-6">
+              <div className="flex gap-2 mb-3">
+                <span className="text-xs font-bold px-2 py-1 bg-rose-100 text-rose-700 rounded-md">مبتدئ</span>
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">إملاء</span>
+              </div>
+              <h4 className="font-bold text-lg mb-2">🎀 التاء المربوطة والمبسوطة</h4>
+              <p className="text-sm text-gray-500 mb-4">تعلم متى تكتب التاء مربوطة أو مبسوطة مع قواعد النطق والتمييز...</p>
+              <button 
+                onClick={() => setSelectedLesson('ta-marbuta')}
+                className="w-full py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-rose-600 transition-colors"
+              >
+                ابدأ الدرس
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
+            <div className="h-40 bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+              <Sparkles size={48} className="text-blue-200" />
+            </div>
+            <div className="p-6">
+              <div className="flex gap-2 mb-3">
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">مبتدئ</span>
+                <span className="text-xs font-bold px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md">إملاء</span>
+              </div>
+              <h4 className="font-bold text-lg mb-2">✨ قواعد الهمزة</h4>
+              <p className="text-sm text-gray-500 mb-4">تعلم قواعد كتابة الهمزة في جميع مواقعها (أول، وسط، آخر الكلمة)...</p>
+              <button 
+                onClick={() => setSelectedLesson('hamza')}
+                className="w-full py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-blue-600 transition-colors"
+              >
+                ابدأ الدرس
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
+            <div className="h-40 bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+              <PenTool size={48} className="text-indigo-200" />
+            </div>
+            <div className="p-6">
+              <div className="flex gap-2 mb-3">
+                <span className="text-xs font-bold px-2 py-1 bg-indigo-100 text-indigo-700 rounded-md">مبتدئ</span>
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">إملاء</span>
+              </div>
+              <h4 className="font-bold text-lg mb-2">🖋️ الألف الفارقة</h4>
+              <p className="text-sm text-gray-500 mb-4">تعلم متى نكتب الألف بعد الواو (واو الجماعة) وكيف نفرق بين أنواع الواو...</p>
+              <button 
+                onClick={() => setSelectedLesson('alif-after-waw')}
+                className="w-full py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-indigo-600 transition-colors"
+              >
+                ابدأ الدرس
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
+            <div className="h-40 bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+              <Video size={48} className="text-blue-200" />
+            </div>
+            <div className="p-6">
+              <div className="flex gap-2 mb-3">
+                <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded-md">تقني</span>
+                <span className="text-xs font-bold px-2 py-1 bg-gray-100 text-gray-700 rounded-md">دليل</span>
+              </div>
+              <h4 className="font-bold text-lg mb-2">📹 ربط Google Meet</h4>
+              <p className="text-sm text-gray-500 mb-4">دليل عملي للمطورين لربط المنصة بـ Google Meet لعقد حصص مباشرة...</p>
+              <button 
+                onClick={() => setSelectedLesson('google-meet-guide')}
+                className="w-full py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-blue-600 transition-colors"
+              >
+                فتح الدليل
+              </button>
+            </div>
+          </div>
+
+          {[4].map(i => (
             <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group opacity-60">
               <div className="h-40 bg-gray-50 flex items-center justify-center">
                 <BookOpen size={48} className="text-gray-200" />
@@ -345,89 +698,29 @@ const Lessons = () => {
 const Exercises = () => {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
-  if (selectedGame === 'types') return (
+  const renderQuiz = (title: string, type: string, QuizComponent: any) => (
     <div className="relative">
       <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <QuizGame />
-    </div>
-  );
-  
-  if (selectedGame === 'verbal') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <VerbalSentenceQuiz />
+      <QuizRegistration quizTitle={title} quizType={type}>
+        {(studentData, onComplete) => (
+          <QuizComponent onComplete={onComplete} />
+        )}
+      </QuizRegistration>
     </div>
   );
 
-  if (selectedGame === 'verbs') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <VerbTypesQuiz />
-    </div>
-  );
-
-  if (selectedGame === 'object') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <ObjectQuiz />
-    </div>
-  );
-
-  if (selectedGame === 'nominal') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <NominalSentenceQuiz />
-    </div>
-  );
-
-  if (selectedGame === 'subject') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <SubjectQuiz />
-    </div>
-  );
-
-  if (selectedGame === 'predicate') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <PredicateQuiz />
-    </div>
-  );
-
-  if (selectedGame === 'states') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <SubjectPredicateStatesQuiz />
-    </div>
-  );
-
-  if (selectedGame === 'subject-predicate') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <SubjectAndPredicateQuiz />
-    </div>
-  );
-
-  if (selectedGame === 'phrase') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <PhraseQuiz />
-    </div>
-  );
-
-  if (selectedGame === 'nominal-exam') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <NominalSentenceExam />
-    </div>
-  );
-
-  if (selectedGame === 'exam') return (
-    <div className="relative">
-      <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold border border-gray-100 hover:bg-white transition-all">العودة للقائمة</button>
-      <VerbalSentenceExam />
-    </div>
-  );
+  if (selectedGame === 'types') return renderQuiz("لعبة أنواع الجمل", "اختبار وحدة", QuizGame);
+  if (selectedGame === 'verbal') return renderQuiz("تحدي الجملة الفعلية", "اختبار وحدة", VerbalSentenceQuiz);
+  if (selectedGame === 'verbs') return renderQuiz("أنواع الفعل", "اختبار وحدة", VerbTypesQuiz);
+  if (selectedGame === 'object') return renderQuiz("المفعول به", "اختبار وحدة", ObjectQuiz);
+  if (selectedGame === 'nominal') return renderQuiz("الجملة الاسمية", "اختبار وحدة", NominalSentenceQuiz);
+  if (selectedGame === 'subject') return renderQuiz("المبتدأ", "اختبار وحدة", SubjectQuiz);
+  if (selectedGame === 'predicate') return renderQuiz("الخبر", "اختبار وحدة", PredicateQuiz);
+  if (selectedGame === 'states') return renderQuiz("أحوال المبتدأ والخبر", "اختبار وحدة", SubjectPredicateStatesQuiz);
+  if (selectedGame === 'subject-predicate') return renderQuiz("المبتدأ والخبر", "اختبار وحدة", SubjectAndPredicateQuiz);
+  if (selectedGame === 'phrase') return renderQuiz("شبه الجملة", "اختبار وحدة", PhraseQuiz);
+  if (selectedGame === 'nominal-exam') return renderQuiz("الامتحان الشامل (الجملة الاسمية)", "امتحان شامل", NominalSentenceExam);
+  if (selectedGame === 'exam') return renderQuiz("الامتحان الشامل (الجملة الفعلية)", "امتحان شامل", VerbalSentenceExam);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-16">
@@ -436,7 +729,7 @@ const Exercises = () => {
         <p className="text-xl text-gray-600">اختر تحدياً وابدأ في اختبار معلوماتك بأسلوب ممتع</p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
         <motion.button 
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -647,6 +940,21 @@ const Exercises = () => {
   );
 };
 
+const LiveRedirect = () => {
+  useEffect(() => {
+    window.location.href = "https://meet.google.com/new";
+  }, []);
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <h2 className="text-xl font-bold text-gray-900">جاري توجيهك إلى الحصة المباشرة...</h2>
+        <p className="text-gray-500 mt-2">يرجى الانتظار لحظة</p>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -666,10 +974,14 @@ export default function App() {
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/courses" element={<CourseList />} />
+            <Route path="/course/:courseId" element={<CourseDetail />} />
+            <Route path="/course/:courseId/learn" element={<LessonPlayer />} />
+            <Route path="/certificate/:courseId" element={<CertificateView />} />
             <Route path="/lessons" element={<Lessons />} />
             <Route path="/exercises" element={<Exercises />} />
-            <Route path="/live" element={<div className="p-20 text-center">صفحة الحصص المباشرة قيد التطوير...</div>} />
-            <Route path="/dashboard" element={<div className="p-20 text-center">لوحة التحكم قيد التطوير...</div>} />
+            <Route path="/live" element={<LiveRedirect />} />
+            <Route path="/dashboard" element={<TeacherDashboard />} />
           </Routes>
         </main>
       </div>

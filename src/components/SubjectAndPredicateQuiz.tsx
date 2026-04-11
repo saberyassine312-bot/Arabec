@@ -73,9 +73,10 @@ const questions: Question[] = [
   }
 ];
 
-export default function SubjectAndPredicateQuiz() {
+export default function SubjectAndPredicateQuiz({ onComplete }: { onComplete?: (result: any) => void }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
+  const [wrongAnswers, setWrongAnswers] = useState<string[]>([]);
   const [showResult, setShowResult] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -86,7 +87,11 @@ export default function SubjectAndPredicateQuiz() {
     setSelectedOption(index);
     const correct = index === questions[currentQuestion].correctAnswer;
     setIsCorrect(correct);
-    if (correct) setScore(score + 1);
+    if (correct) {
+      setScore(score + 1);
+    } else {
+      setWrongAnswers([...wrongAnswers, questions[currentQuestion].text]);
+    }
   };
 
   const nextQuestion = () => {
@@ -96,12 +101,21 @@ export default function SubjectAndPredicateQuiz() {
       setIsCorrect(null);
     } else {
       setShowResult(true);
+      if (onComplete) {
+        onComplete({
+          score: `${score} من ${questions.length}`,
+          wrongAnswers,
+          totalQuestions: questions.length,
+          correctCount: score
+        });
+      }
     }
   };
 
   const resetGame = () => {
     setCurrentQuestion(0);
     setScore(0);
+    setWrongAnswers([]);
     setShowResult(false);
     setSelectedOption(null);
     setIsCorrect(null);

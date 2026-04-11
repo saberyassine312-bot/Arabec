@@ -102,10 +102,11 @@ const questions: Question[] = [
   }
 ];
 
-export default function VerbalSentenceExam() {
+export default function VerbalSentenceExam({ onComplete }: { onComplete?: (result: any) => void }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [errorCount, setErrorCount] = useState(0);
+  const [wrongAnswers, setWrongAnswers] = useState<string[]>([]);
   const [showResult, setShowResult] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -121,6 +122,7 @@ export default function VerbalSentenceExam() {
       setCorrectCount(prev => prev + 1);
     } else {
       setErrorCount(prev => prev + 1);
+      setWrongAnswers(prev => [...prev, questions[currentQuestion].text]);
     }
   };
 
@@ -131,6 +133,14 @@ export default function VerbalSentenceExam() {
       setIsCorrect(null);
     } else {
       setShowResult(true);
+      if (onComplete) {
+        onComplete({
+          score: `${correctCount} من ${questions.length}`,
+          wrongAnswers,
+          totalQuestions: questions.length,
+          correctCount: correctCount
+        });
+      }
     }
   };
 
@@ -138,6 +148,7 @@ export default function VerbalSentenceExam() {
     setCurrentQuestion(0);
     setCorrectCount(0);
     setErrorCount(0);
+    setWrongAnswers([]);
     setShowResult(false);
     setSelectedOption(null);
     setIsCorrect(null);
@@ -202,7 +213,7 @@ export default function VerbalSentenceExam() {
                   </h3>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {questions[currentQuestion].options.map((option, index) => {
                     let bgColor = "bg-gray-50 hover:bg-indigo-50 border-gray-200 hover:border-indigo-200";
                     let textColor = "text-gray-700";
