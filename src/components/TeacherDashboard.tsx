@@ -17,7 +17,12 @@ import {
   ArrowRight,
   TrendingUp,
   FileText,
-  Clock
+  Clock,
+  Zap,
+  Award,
+  Crown,
+  Flame,
+  BookOpen
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -47,17 +52,33 @@ interface StudentProfile {
   attempts: QuizAttempt[];
 }
 
+interface StudentLMSProfile {
+  uid: string;
+  displayName: string;
+  email: string;
+  xp: number;
+  level: string;
+  streak: number;
+  badges: string[];
+  enrollments: any[];
+  quizAttempts: QuizAttempt[];
+}
+
 export const TeacherDashboard: React.FC = () => {
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
+  const [lmsStudents, setLmsStudents] = useState<StudentLMSProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
   const [selectedSection, setSelectedSection] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<StudentProfile | null>(null);
+  const [selectedLmsStudent, setSelectedLmsStudent] = useState<StudentLMSProfile | null>(null);
+  const [activeTab, setActiveTab] = useState<'students' | 'lms' | 'integration'>('lms');
 
   useEffect(() => {
-    const fetchAttempts = async () => {
+    const fetchData = async () => {
       try {
+        // Fetch Quiz Attempts
         const q = query(collection(db, 'quizAttempts'), orderBy('timestamp', 'desc'));
         const snapshot = await getDocs(q);
         const attemptsData = snapshot.docs.map(doc => ({
@@ -65,15 +86,56 @@ export const TeacherDashboard: React.FC = () => {
           ...doc.data()
         })) as QuizAttempt[];
         setAttempts(attemptsData);
+
+        // Fetch Users
+        const usersSnapshot = await getDocs(collection(db, 'users'));
+        const usersData = usersSnapshot.docs.map(doc => ({
+          uid: doc.id,
+          ...doc.data()
+        }));
+
+        // Fetch Enrollments
+        const enrollSnapshot = await getDocs(collection(db, 'enrollments'));
+        const enrollData = enrollSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as any[];
+
+        // Link everything
+        const linkedStudents = usersData.map((user: any) => {
+          const userEnrollments = enrollData.filter(e => e.userId === user.uid);
+          const userAttempts = attemptsData.filter(a => a.studentData?.firstName === user.displayName?.split(' ')[0]); // Fallback matching
+          
+          return {
+            uid: user.uid,
+            displayName: user.displayName || 'طالب مجهول',
+            email: user.email || '',
+            xp: user.xp || 0,
+            level: calculateLevel(user.xp || 0),
+            streak: user.streak || 0,
+            badges: user.badges || [],
+            enrollments: userEnrollments,
+            quizAttempts: userAttempts
+          };
+        });
+
+        setLmsStudents(linkedStudents);
       } catch (error) {
-        console.error("Error fetching quiz attempts:", error);
+        console.error("Error fetching dashboard data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAttempts();
+    fetchData();
   }, []);
+
+  const calculateLevel = (xp: number) => {
+    if (xp <= 100) return 'مبتدئ';
+    if (xp <= 300) return 'متوسط';
+    if (xp <= 600) return 'متقدم';
+    return 'خبير';
+  };
 
   const levels = Array.from(new Set(attempts.map(a => a.studentData.level)));
   const sections = Array.from(new Set(attempts.map(a => a.studentData.section)));
@@ -140,6 +202,33 @@ export const TeacherDashboard: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap gap-3">
+            <button 
+              onClick={() => setActiveTab('lms')}
+              className={cn(
+                "px-6 py-2.5 rounded-2xl font-bold transition-all",
+                activeTab === 'lms' ? "bg-emerald-600 text-white shadow-lg shadow-emerald-100" : "bg-white text-gray-600 border border-gray-100"
+              )}
+            >
+              تحليلات المنصة
+            </button>
+            <button 
+              onClick={() => setActiveTab('students')}
+              className={cn(
+                "px-6 py-2.5 rounded-2xl font-bold transition-all",
+                activeTab === 'students' ? "bg-emerald-600 text-white shadow-lg shadow-emerald-100" : "bg-white text-gray-600 border border-gray-100"
+              )}
+            >
+              نتائج الاختبارات
+            </button>
+            <button 
+              onClick={() => setActiveTab('integration')}
+              className={cn(
+                "px-6 py-2.5 rounded-2xl font-bold transition-all",
+                activeTab === 'integration' ? "bg-emerald-600 text-white shadow-lg shadow-emerald-100" : "bg-white text-gray-600 border border-gray-100"
+              )}
+            >
+              دليل الألعاب
+            </button>
             <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3">
               <Users className="text-emerald-600" size={24} />
               <div>
@@ -158,9 +247,121 @@ export const TeacherDashboard: React.FC = () => {
         </div>
 
         <div className="grid lg:grid-cols-[1fr_350px] gap-8">
-          {/* Main Content */}
-          <div className="space-y-6">
-            {/* Filters */}
+          {activeTab === 'lms' ? (
+            <div className="lg:col-span-2 space-y-8">
+              {/* LMS Analytics Table */}
+              <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+                <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+                  <h3 className="text-xl font-black text-gray-900 flex items-center gap-3">
+                    <GraduationCap size={24} className="text-emerald-600" />
+                    بيانات المتعلمين والتقدم
+                  </h3>
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                      <input 
+                        type="text" 
+                        placeholder="بحث عن طالب..."
+                        className="pr-10 pl-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-right">
+                    <thead>
+                      <tr className="bg-gray-50/50 text-gray-400 text-xs font-black uppercase tracking-wider">
+                        <th className="px-8 py-4">المتعلم</th>
+                        <th className="px-8 py-4">المستوى (XP)</th>
+                        <th className="px-8 py-4">التقدم في الدروس</th>
+                        <th className="px-8 py-4">الأوسمة</th>
+                        <th className="px-8 py-4">آخر نشاط</th>
+                        <th className="px-8 py-4"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {lmsStudents
+                        .filter(s => s.displayName.toLowerCase().includes(searchTerm.toLowerCase()))
+                        .map((student) => (
+                        <tr key={student.uid} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="px-8 py-6">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center font-black text-xl">
+                                {student.displayName[0]}
+                              </div>
+                              <div>
+                                <div className="font-black text-gray-900">{student.displayName}</div>
+                                <div className="text-xs text-gray-400 font-bold">{student.email}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className="flex flex-col">
+                              <span className="font-black text-gray-900">{student.level}</span>
+                              <span className="text-xs text-amber-600 font-bold">{student.xp} XP</span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className="space-y-2 min-w-[150px]">
+                              <div className="flex justify-between text-[10px] font-black">
+                                <span className="text-gray-400">{student.enrollments.length} دورات</span>
+                                <span className="text-emerald-600">
+                                  {student.enrollments.length > 0 
+                                    ? Math.round(student.enrollments.reduce((acc, e) => acc + (e.progress || 0), 0) / student.enrollments.length)
+                                    : 0}% معدل التقدم
+                                </span>
+                              </div>
+                              <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                                <div 
+                                  className="bg-emerald-500 h-full" 
+                                  style={{ width: `${student.enrollments.length > 0 ? Math.round(student.enrollments.reduce((acc, e) => acc + (e.progress || 0), 0) / student.enrollments.length) : 0}%` }}
+                                />
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className="flex -space-x-2">
+                              {student.badges.slice(0, 3).map((b, i) => (
+                                <div key={i} className="w-8 h-8 rounded-full bg-purple-50 border-2 border-white flex items-center justify-center text-purple-600 shadow-sm">
+                                  <Award size={14} />
+                                </div>
+                              ))}
+                              {student.badges.length > 3 && (
+                                <div className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[10px] font-black text-gray-400">
+                                  +{student.badges.length - 3}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className="flex items-center gap-2 text-xs font-bold text-gray-500">
+                              <Clock size={14} />
+                              {student.streak > 0 ? `سلسلة ${student.streak} أيام` : 'غير نشط'}
+                            </div>
+                          </td>
+                          <td className="px-8 py-6 text-left">
+                            <button 
+                              onClick={() => setSelectedLmsStudent(student)}
+                              className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                            >
+                              <ChevronLeft size={20} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          ) : activeTab === 'students' ? (
+            <>
+              {/* Main Content */}
+              <div className="space-y-6">
+                {/* Filters */}
             <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -328,8 +529,73 @@ export const TeacherDashboard: React.FC = () => {
               </div>
             </div>
           </div>
+        </>
+      ) : (
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+            <h2 className="text-2xl font-black mb-6 flex items-center gap-3">
+              <Zap className="text-amber-500" />
+              <span>دليل دمج الألعاب التعليمية (Gamification)</span>
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <h3 className="text-lg font-bold text-emerald-600">1. كيفية الإدراج في Google Classroom</h3>
+                <ul className="space-y-3 text-gray-600 text-sm list-disc pr-4">
+                  <li>افتح صفك الدراسي واضغط على "الواجب الدراسي".</li>
+                  <li>اختر "إنشاء" ثم "مهمة للاختبار" أو "رابط".</li>
+                  <li>انسخ رابط اللعبة من المنصة (مثلاً: /parsing-adventure) وألصقه كرابط خارجي.</li>
+                  <li>حدد النقاط (مثلاً 100 نقطة) لتتوافق مع نظام الدرجات في اللعبة.</li>
+                </ul>
+              </div>
+              <div className="space-y-6">
+                <h3 className="text-lg font-bold text-blue-600">2. أدوات خارجية مقترحة</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div className="font-black text-gray-900">Kahoot!</div>
+                    <div className="text-xs text-gray-400">للمسابقات المباشرة</div>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div className="font-black text-gray-900">Quizizz</div>
+                    <div className="text-xs text-gray-400">للاختبارات المنزلية</div>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div className="font-black text-gray-900">Wordwall</div>
+                    <div className="text-xs text-gray-400">للألعاب التفاعلية</div>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div className="font-black text-gray-900">Genially</div>
+                    <div className="text-xs text-gray-400">للعروض التفاعلية</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-12 p-6 bg-emerald-50 rounded-3xl border border-emerald-100">
+              <h3 className="font-black text-emerald-800 mb-4">🏆 نظام التحفيز المقترح</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-white p-4 rounded-2xl text-center shadow-sm">
+                  <Award className="text-amber-500 mx-auto mb-2" size={32} />
+                  <div className="font-bold text-sm">خبير المعرب والمبني</div>
+                  <div className="text-[10px] text-gray-400">عند إتقان المستوى الأول</div>
+                </div>
+                <div className="bg-white p-4 rounded-2xl text-center shadow-sm">
+                  <Zap className="text-blue-500 mx-auto mb-2" size={32} />
+                  <div className="font-bold text-sm">سريع الإجابة</div>
+                  <div className="text-[10px] text-gray-400">لإنهاء الاختبار في أقل من دقيقتين</div>
+                </div>
+                <div className="bg-white p-4 rounded-2xl text-center shadow-sm">
+                  <Crown className="text-purple-500 mx-auto mb-2" size={32} />
+                  <div className="font-bold text-sm">بطل الإعراب</div>
+                  <div className="text-[10px] text-gray-400">للحصول على الدرجة الكاملة</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+    </div>
+  </div>
 
       {/* Student Detail Modal */}
       <AnimatePresence>
@@ -434,6 +700,141 @@ export const TeacherDashboard: React.FC = () => {
                         <span className="text-amber-600 font-bold text-sm">لا توجد أخطاء مسجلة، أداء ممتاز!</span>
                       )}
                     </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* LMS Student Detail Modal */}
+      <AnimatePresence>
+        {selectedLmsStudent && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedLmsStudent(null)}
+              className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white w-full max-w-3xl rounded-[3rem] shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              <div className="bg-slate-900 p-10 text-white relative">
+                <button 
+                  onClick={() => setSelectedLmsStudent(null)}
+                  className="absolute top-8 left-8 w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"
+                >
+                  <ArrowRight size={24} />
+                </button>
+                <div className="flex items-center gap-8">
+                  <div className="w-24 h-24 bg-emerald-500 rounded-[2rem] flex items-center justify-center text-4xl font-black shadow-lg shadow-emerald-500/20">
+                    {selectedLmsStudent.displayName[0]}
+                  </div>
+                  <div>
+                    <h2 className="text-4xl font-black mb-2">{selectedLmsStudent.displayName}</h2>
+                    <div className="flex items-center gap-4 text-slate-400 font-bold">
+                      <span className="flex items-center gap-2"><User size={16} /> {selectedLmsStudent.email}</span>
+                      <span className="w-1.5 h-1.5 bg-slate-700 rounded-full" />
+                      <span className="text-emerald-400">مستوى {selectedLmsStudent.level}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-10 space-y-10">
+                {/* Gamification Stats */}
+                <div className="grid grid-cols-4 gap-6">
+                  <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 text-center">
+                    <Zap className="text-amber-500 mx-auto mb-2" size={24} />
+                    <div className="text-2xl font-black text-slate-900">{selectedLmsStudent.xp}</div>
+                    <div className="text-[10px] text-slate-400 font-black uppercase">إجمالي XP</div>
+                  </div>
+                  <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 text-center">
+                    <Flame className="text-orange-500 mx-auto mb-2" size={24} />
+                    <div className="text-2xl font-black text-slate-900">{selectedLmsStudent.streak}</div>
+                    <div className="text-[10px] text-slate-400 font-black uppercase">أيام متتالية</div>
+                  </div>
+                  <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 text-center">
+                    <Award className="text-purple-500 mx-auto mb-2" size={24} />
+                    <div className="text-2xl font-black text-slate-900">{selectedLmsStudent.badges.length}</div>
+                    <div className="text-[10px] text-slate-400 font-black uppercase">أوسمة</div>
+                  </div>
+                  <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 text-center">
+                    <BookOpen className="text-blue-500 mx-auto mb-2" size={24} />
+                    <div className="text-2xl font-black text-slate-900">{selectedLmsStudent.enrollments.length}</div>
+                    <div className="text-[10px] text-slate-400 font-black uppercase">دورات</div>
+                  </div>
+                </div>
+
+                {/* Course Progress */}
+                <div className="space-y-6">
+                  <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
+                    <TrendingUp size={20} className="text-emerald-600" />
+                    التقدم في الدورات التعليمية
+                  </h3>
+                  <div className="grid gap-4">
+                    {selectedLmsStudent.enrollments.map((en, i) => (
+                      <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-black">
+                            {i + 1}
+                          </div>
+                          <div>
+                            <div className="font-black text-slate-900">دورة {en.courseId}</div>
+                            <div className="text-xs text-slate-400 font-bold">تاريخ التسجيل: {new Date(en.enrolledAt?.toDate?.() || en.enrolledAt).toLocaleDateString('ar-EG')}</div>
+                          </div>
+                        </div>
+                        <div className="text-right space-y-2 min-w-[120px]">
+                          <div className="text-lg font-black text-emerald-600">{en.progress}%</div>
+                          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                            <div className="bg-emerald-500 h-full" style={{ width: `${en.progress}%` }} />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {selectedLmsStudent.enrollments.length === 0 && (
+                      <div className="p-8 bg-slate-50 rounded-3xl text-center text-slate-400 font-bold">
+                        لم يسجل هذا الطالب في أي دورة بعد.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Quiz Attempts */}
+                <div className="space-y-6">
+                  <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
+                    <FileText size={20} className="text-blue-600" />
+                    نتائج الاختبارات والتقييم
+                  </h3>
+                  <div className="grid gap-4">
+                    {selectedLmsStudent.quizAttempts.map((attempt) => (
+                      <div key={attempt.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className={cn(
+                            "w-12 h-12 rounded-2xl flex items-center justify-center font-black",
+                            parseInt(attempt.score) >= 80 ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
+                          )}>
+                            {attempt.score}
+                          </div>
+                          <div>
+                            <div className="font-black text-slate-900">{attempt.quizTitle}</div>
+                            <div className="text-xs text-slate-400 font-bold">{attempt.quizType} • {new Date(attempt.timestamp?.toDate?.() || attempt.timestamp).toLocaleDateString('ar-EG')}</div>
+                          </div>
+                        </div>
+                        <button className="text-blue-600 font-bold text-sm hover:underline">عرض التفاصيل</button>
+                      </div>
+                    ))}
+                    {selectedLmsStudent.quizAttempts.length === 0 && (
+                      <div className="p-8 bg-slate-50 rounded-3xl text-center text-slate-400 font-bold">
+                        لا توجد محاولات اختبار مسجلة لهذا الطالب.
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

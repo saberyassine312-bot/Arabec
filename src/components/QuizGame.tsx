@@ -72,13 +72,16 @@ const questions: Question[] = [
   }
 ];
 
-export default function QuizGame({ type = "game", onComplete }: { type?: string; onComplete?: (result: any) => void }) {
+import { auth } from '../lib/firebase';
+
+export default function QuizGame({ type = "grammar", onComplete }: { type?: string; onComplete?: (result: any) => void }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [wrongAnswers, setWrongAnswers] = useState<string[]>([]);
   const [showResult, setShowResult] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [startTime] = useState(Date.now());
 
   const handleOptionClick = (index: number) => {
     if (selectedOption !== null) return;
@@ -93,19 +96,22 @@ export default function QuizGame({ type = "game", onComplete }: { type?: string;
     }
   };
 
-  const nextQuestion = () => {
+  const nextQuestion = async () => {
     if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedOption(null);
       setIsCorrect(null);
     } else {
       setShowResult(true);
+      const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+      
       if (onComplete) {
         onComplete({
           score: `${score} من ${questions.length}`,
           wrongAnswers,
           totalQuestions: questions.length,
-          correctCount: score
+          correctCount: score,
+          timeSpent
         });
       }
     }

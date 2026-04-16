@@ -10,6 +10,7 @@ interface CourseCardProps {
   description: string;
   thumbnail?: string;
   level: string;
+  category?: string;
   duration?: string;
   rating?: number;
   enrolledCount?: number;
@@ -22,11 +23,33 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   description,
   thumbnail,
   level,
+  category,
   duration,
   rating = 0,
   enrolledCount = 0,
   className
 }) => {
+  const getCategoryLabel = (cat?: string) => {
+    switch(cat) {
+      case 'grammar': return 'نحو';
+      case 'morphology': return 'صرف';
+      case 'spelling': return 'إملاء';
+      default: return cat;
+    }
+  };
+
+  const getLevelLabel = (lvl: string) => {
+    switch(lvl) {
+      case '1apic': return 'الأولى إعدادي';
+      case '2apic': return 'الثانية إعدادي';
+      case '3apic': return 'الثالثة إعدادي';
+      case 'beginner': return 'مبتدئ';
+      case 'intermediate': return 'متوسط';
+      case 'advanced': return 'متقدم';
+      default: return lvl;
+    }
+  };
+
   return (
     <motion.div
       whileHover={{ y: -5 }}
@@ -45,13 +68,18 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               referrerPolicy="no-referrer"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-emerald-50 text-emerald-200">
+            <div className="w-full h-full flex items-center justify-center bg-indigo-50 text-indigo-200">
               <BookOpen size={64} />
             </div>
           )}
-          <div className="absolute top-4 right-4">
-            <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-emerald-700 text-xs font-bold rounded-full shadow-sm">
-              {level}
+          <div className="absolute top-4 right-4 flex gap-2">
+            {category && (
+              <span className="px-3 py-1 bg-indigo-600 text-white text-[10px] font-black rounded-full shadow-lg">
+                {getCategoryLabel(category)}
+              </span>
+            )}
+            <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-700 text-[10px] font-black rounded-full shadow-sm">
+              {getLevelLabel(level)}
             </span>
           </div>
         </div>

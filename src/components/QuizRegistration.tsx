@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, GraduationCap, School, Hash, ArrowRight, ClipboardList, X, CheckCircle, AlertCircle } from 'lucide-react';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { User, GraduationCap, School, Hash, ArrowRight, ClipboardList, X, CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
+import { addDoc, collection, serverTimestamp, doc, getDoc, updateDoc, increment } from 'firebase/firestore';
+import { db, auth } from '../lib/firebase';
 import { cn } from '../lib/utils';
+import { onAuthStateChanged } from 'firebase/auth';
+import { analyzePerformance } from '../services/SmartAnalysisService';
 
 interface StudentData {
   firstName: string;
@@ -21,6 +23,8 @@ interface QuizResult {
   primaryIntelligence?: string;
   secondaryIntelligence?: string;
   isIntelligenceTest?: boolean;
+  timeSpent?: number;
+  learningStyle?: string;
 }
 
 interface QuizRegistrationProps {
@@ -36,6 +40,7 @@ export const QuizRegistration: React.FC<QuizRegistrationProps> = ({ quizTitle, q
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [formData, setFormData] = useState<StudentData>({
     firstName: '',
     lastName: '',
@@ -43,6 +48,32 @@ export const QuizRegistration: React.FC<QuizRegistrationProps> = ({ quizTitle, q
     section: '',
     number: ''
   });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            if (data.firstName && data.lastName) {
+              setStudentData({
+                firstName: data.firstName,
+                lastName: data.lastName,
+                level: data.gradeLevel || '',
+                section: data.section || '',
+                number: data.orderNumber || ''
+              });
+            }
+          }
+        } catch (err) {
+          console.error("Error fetching profile in QuizRegistration:", err);
+        }
+      }
+      setIsLoadingProfile(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,22 +113,33 @@ export const QuizRegistration: React.FC<QuizRegistrationProps> = ({ quizTitle, q
         timestamp: serverTimestamp()
       });
 
-      // 2. Send to WhatsApp
-      const date = new Date().toLocaleString('ar-EG');
-      let message = `📊 نتيجة اختبار جديد
-👤 الاسم: ${studentData.firstName}
-🧾 النسب: ${studentData.lastName}
-🎓 المستوى: ${studentData.level}
-🏫 القسم: ${studentData.section}
-📱 الرقم: ${studentData.number}
-🧠 نوع الاختبار: ${quizType}
-📝 اسم الاختبار: ${quizTitle}
-📈 النتيجة: ${quizResult.score}
-⏱️ التاريخ: ${date}`;
-
-      if (!quizResult.isIntelligenceTest && quizResult.wrongAnswers && quizResult.wrongAnswers.length > 0) {
-        message += `\n⚠️ ملاحظة: التلميذ لا يميز بين: ${errorsToFocus}`;
+      // 2. Smart Analysis & Profile Update
+      if (auth.currentUser) {
+        await analyzePerformance({
+          userId: auth.currentUser.uid,
+          quizType: quizType,
+          score: quizResult.correctCount || 0,
+          totalQuestions: quizResult.totalQuestions || 10,
+          wrongAnswers: quizResult.wrongAnswers || [],
+          timeSpent: quizResult.timeSpent,
+          learningStyle: quizResult.learningStyle,
+          isIntelligenceTest: quizResult.isIntelligenceTest
+        });
       }
+
+      // 3. Send to WhatsApp
+      const message = `السلام عليكم أستاذي الكريم،
+
+📊 تم تسجيل نتيجة اختبار جديدة، التفاصيل كما يلي:
+
+👤 الاسم: ${studentData.firstName} ${studentData.lastName}  
+🎓 المستوى: ${studentData.level}  
+🏫 القسم: ${studentData.section}  
+🔢 الرقم الترتيبي: ${studentData.number}  
+📝 موضوع الاختبار: ${quizTitle}  
+✔️ النتيجة: ${quizResult.score}  
+
+يرجى الاطلاع، وشكرًا لجهودكم.`;
 
       const encodedMessage = encodeURIComponent(message);
       
@@ -159,6 +201,14 @@ export const QuizRegistration: React.FC<QuizRegistrationProps> = ({ quizTitle, q
             </button>
           </div>
         </motion.div>
+      </div>
+    );
+  }
+
+  if (isLoadingProfile) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }

@@ -10,6 +10,7 @@ export const CourseList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -35,7 +36,8 @@ export const CourseList: React.FC = () => {
     const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          course.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLevel = selectedLevel === 'all' || course.level === selectedLevel;
-    return matchesSearch && matchesLevel;
+    const matchesCategory = selectedCategory === 'all' || course.category === selectedCategory;
+    return matchesSearch && matchesLevel && matchesCategory;
   });
 
   if (loading) {
@@ -69,11 +71,28 @@ export const CourseList: React.FC = () => {
           <div className="relative">
             <Filter className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full sm:w-48 pr-10 pl-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all appearance-none font-bold"
+            >
+              <option value="all">جميع المسارات</option>
+              <option value="grammar">النحو</option>
+              <option value="morphology">الصرف</option>
+              <option value="spelling">الإملاء</option>
+            </select>
+          </div>
+
+          <div className="relative">
+            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <select
               value={selectedLevel}
               onChange={(e) => setSelectedLevel(e.target.value)}
-              className="w-full sm:w-48 pr-10 pl-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none"
+              className="w-full sm:w-48 pr-10 pl-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all appearance-none font-bold"
             >
               <option value="all">جميع المستويات</option>
+              <option value="1apic">الأولى إعدادي</option>
+              <option value="2apic">الثانية إعدادي</option>
+              <option value="3apic">الثالثة إعدادي</option>
               <option value="beginner">مبتدئ</option>
               <option value="intermediate">متوسط</option>
               <option value="advanced">متقدم</option>

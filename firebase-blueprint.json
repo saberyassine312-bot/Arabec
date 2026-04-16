@@ -7,10 +7,19 @@
       "properties": {
         "uid": { "type": "string", "description": "Firebase Auth UID" },
         "displayName": { "type": "string", "description": "User's display name" },
+        "firstName": { "type": "string", "description": "الاسم الشخصي" },
+        "lastName": { "type": "string", "description": "النسب" },
+        "gradeLevel": { "type": "string", "description": "المستوى الدراسي" },
+        "section": { "type": "string", "description": "القسم" },
+        "orderNumber": { "type": "string", "description": "الرقم الترتيبي" },
         "email": { "type": "string", "description": "User's email address" },
         "role": { "type": "string", "enum": ["student", "teacher", "admin"], "description": "User's role in the platform" },
         "points": { "type": "number", "description": "Total points earned by the user" },
-        "createdAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp" }
+        "learningStyle": { "type": "string", "enum": ["visual", "applied", "analytical"], "description": "Analyzed learning style" },
+        "difficultyAreas": { "type": "array", "description": "List of subjects the user struggles with" },
+        "lastLessonId": { "type": "string", "description": "ID of the last lesson completed" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp" },
+        "isProfileComplete": { "type": "boolean", "description": "Whether the user has completed the mandatory registration" }
       },
       "required": ["uid", "email", "role"]
     },

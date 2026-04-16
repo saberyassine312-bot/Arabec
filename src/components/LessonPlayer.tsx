@@ -13,12 +13,18 @@ import {
   Award,
   ArrowRight,
   FileText,
-  Video
+  Video,
+  Box,
+  Gift,
+  Sparkles
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { QuizComponent } from './QuizComponent';
 import { QuizRegistration } from './QuizRegistration';
+import { InteractiveLesson } from './InteractiveLesson';
 import { cn } from '../lib/utils';
+
+import { useGamification } from '../hooks/useGamification';
 
 export const LessonPlayer: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -28,7 +34,10 @@ export const LessonPlayer: React.FC = () => {
   const [enrollment, setEnrollment] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showMysteryBox, setShowMysteryBox] = useState(false);
+  const [mysteryReward, setMysteryReward] = useState<number | null>(null);
   const navigate = useNavigate();
+  const { addXP } = useGamification();
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -102,6 +111,22 @@ export const LessonPlayer: React.FC = () => {
           completedAt: progress === 100 ? serverTimestamp() : null
         });
 
+        // Reward XP
+        await addXP(50); // 50 XP for completing a lesson
+
+        // Update last lesson in user profile
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+        await updateDoc(userRef, {
+          lastLessonId: lessonId
+        });
+
+        // Chance for Mystery Box (20%)
+        if (Math.random() < 0.2) {
+          const reward = Math.floor(Math.random() * 20) + 10; // 10-30 XP
+          setMysteryReward(reward);
+          setShowMysteryBox(true);
+        }
+
         setEnrollment({ ...enrollment, completedLessons: newCompleted, progress });
 
         if (progress === 100) {
@@ -122,6 +147,14 @@ export const LessonPlayer: React.FC = () => {
     }
   };
 
+  const claimMysteryReward = async () => {
+    if (mysteryReward) {
+      await addXP(mysteryReward);
+    }
+    setShowMysteryBox(false);
+    setMysteryReward(null);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -134,6 +167,48 @@ export const LessonPlayer: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-white overflow-hidden" dir="rtl">
+      {/* Mystery Box Modal */}
+      <AnimatePresence>
+        {showMysteryBox && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={claimMysteryReward}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative bg-white w-full max-w-sm rounded-[3rem] p-12 text-center shadow-2xl"
+            >
+              <div className="w-24 h-24 bg-purple-100 text-purple-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner animate-bounce">
+                <Box size={48} />
+              </div>
+              <h2 className="text-3xl font-black text-slate-900 mb-4">صندوق المفاجآت!</h2>
+              <p className="text-slate-500 mb-8">لقد حصلت على مكافأة إضافية لتميزك في الدرس.</p>
+              
+              <div className="bg-amber-50 p-6 rounded-3xl border border-amber-100 mb-8">
+                <div className="text-xs text-amber-600 font-bold mb-1 uppercase">نقاط إضافية</div>
+                <div className="text-4xl font-black text-amber-700 flex items-center justify-center gap-2">
+                  <Sparkles size={24} />
+                  +{mysteryReward} XP
+                </div>
+              </div>
+
+              <button 
+                onClick={claimMysteryReward}
+                className="w-full py-4 bg-purple-600 text-white rounded-2xl font-black text-xl shadow-xl shadow-purple-100 hover:bg-purple-700 transition-all flex items-center justify-center gap-2"
+              >
+                <Gift size={20} />
+                استلام المكافأة
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
       {/* Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -274,6 +349,8 @@ export const LessonPlayer: React.FC = () => {
                       )}
                     </QuizRegistration>
                   </div>
+                ) : currentLesson?.type === 'interactive' ? (
+                  <InteractiveLesson onComplete={() => handleLessonComplete(currentLesson.id)} />
                 ) : (
                   <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm prose prose-emerald max-w-none">
                     <ReactMarkdown>{currentLesson?.content}</ReactMarkdown>
