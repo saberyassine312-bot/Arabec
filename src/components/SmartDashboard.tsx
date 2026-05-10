@@ -4,11 +4,12 @@ import {
   User, BookOpen, Zap, Trophy, Clock, 
   ArrowRight, Play, CheckCircle2, BarChart3,
   Brain, PenTool, BookMarked, LayoutDashboard,
-  GraduationCap, Target, Flame, Star
+  GraduationCap, Target, Flame, Star, Sparkles
 } from 'lucide-react';
 import { collection, query, where, orderBy, limit, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
 import { useNavigate } from 'react-router-dom';
+import { handleFirestoreError, OperationType } from '../lib/firestoreUtils';
 
 export default function SmartDashboard() {
   const [profile, setProfile] = useState<any>(null);
@@ -20,10 +21,12 @@ export default function SmartDashboard() {
   useEffect(() => {
     if (!auth.currentUser) return;
 
-    const unsubscribeProfile = onSnapshot(doc(db, 'users', auth.currentUser.uid), (doc) => {
-      if (doc.exists()) {
-        setProfile(doc.data());
+    const unsubscribeProfile = onSnapshot(doc(db, 'users', auth.currentUser.uid), (docSnap) => {
+      if (docSnap.exists()) {
+        setProfile(docSnap.data());
       }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, `users/${auth.currentUser?.uid}`);
     });
 
     const qAttempts = query(
@@ -35,6 +38,8 @@ export default function SmartDashboard() {
 
     const unsubscribeAttempts = onSnapshot(qAttempts, (snapshot) => {
       setRecentAttempts(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'quizAttempts');
     });
 
     // Fetch last lesson if exists
@@ -66,6 +71,7 @@ export default function SmartDashboard() {
   }
 
   const paths = [
+    { id: 'grammar-smart', title: 'مسارات التعلم الذكي', icon: <Sparkles className="text-white" />, color: 'bg-indigo-600', count: 'ذكاء اصطناعي', isSmart: true },
     { id: 'grammar', title: 'النحو', icon: <BookMarked className="text-blue-600" />, color: 'bg-blue-50', count: 12 },
     { id: 'morphology', title: 'الصرف', icon: <Brain className="text-purple-600" />, color: 'bg-purple-50', count: 8 },
     { id: 'spelling', title: 'الإملاء', icon: <PenTool className="text-amber-600" />, color: 'bg-amber-50', count: 10 },
@@ -178,6 +184,11 @@ export default function SmartDashboard() {
                 <motion.div
                   key={path.id}
                   whileHover={{ y: -8 }}
+                  onClick={() => {
+                    if (path.id === 'grammar-smart') navigate('/grammar-smart-path');
+                    else if (path.id === 'grammar') navigate('/levels');
+                    else navigate(`/courses?category=${path.id}`);
+                  }}
                   className="bg-white p-6 rounded-[2.5rem] shadow-lg shadow-gray-200/50 border border-gray-50 flex flex-col items-center text-center group cursor-pointer"
                 >
                   <div className={`w-20 h-20 ${path.color} rounded-[2rem] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>

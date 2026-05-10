@@ -349,8 +349,76 @@ export const LessonPlayer: React.FC = () => {
                       )}
                     </QuizRegistration>
                   </div>
-                ) : currentLesson?.type === 'interactive' ? (
-                  <InteractiveLesson onComplete={() => handleLessonComplete(currentLesson.id)} />
+                ) : currentLesson?.type === 'interactive' || currentLesson?.type === 'smart' ? (
+                  <div className="space-y-12">
+                    {/* Text Content */}
+                    {currentLesson.content && (
+                      <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-sm prose prose-emerald max-w-none">
+                        <ReactMarkdown>{currentLesson.content}</ReactMarkdown>
+                      </div>
+                    )}
+
+                    {/* Media Items */}
+                    {currentLesson.media && currentLesson.media.map((item: any, idx: number) => (
+                      <motion.div 
+                        key={idx}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="space-y-4"
+                      >
+                        {item.type === 'video' && (
+                          <div className="aspect-video bg-black rounded-[2.5rem] overflow-hidden shadow-2xl">
+                             <iframe
+                              src={item.url.includes('youtube') ? item.url.replace('watch?v=', 'embed/') : item.url}
+                              className="w-full h-full"
+                              allowFullScreen
+                              title={item.title || "فيديو تعليمي"}
+                            ></iframe>
+                          </div>
+                        )}
+                        {item.type === 'image' && (
+                          <div className="rounded-[2.5rem] overflow-hidden shadow-xl border-4 border-white">
+                            <img src={item.url} alt={item.title || "صورة توضيحية"} className="w-full h-auto" referrerPolicy="no-referrer" />
+                            {item.title && <div className="p-4 bg-gray-50 text-center font-bold text-gray-600">{item.title}</div>}
+                          </div>
+                        )}
+                        {item.type === 'local-video' && (
+                          <div className="aspect-video bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                            <video controls className="w-full h-full">
+                              <source src={item.url} type="video/mp4" />
+                              متصفحك لا يدعم تشغيل الفيديو.
+                            </video>
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+
+                    {/* Interactive Component Fallback */}
+                    {currentLesson.type === 'interactive' && !currentLesson.media && (
+                      <InteractiveLesson onComplete={() => handleLessonComplete(currentLesson.id)} />
+                    )}
+
+                    {/* Lesson Quiz */}
+                    {currentLesson.questions && currentLesson.questions.length > 0 && (
+                      <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-sm space-y-8">
+                        <div className="flex items-center gap-4">
+                           <div className="w-12 h-12 bg-amber-500 text-white rounded-2xl flex items-center justify-center">
+                              <Sparkles size={24} />
+                           </div>
+                           <h3 className="text-2xl font-black text-gray-900">اختبر فهمك للدرس</h3>
+                        </div>
+                        <QuizComponent 
+                          questions={currentLesson.questions} 
+                          onComplete={(result) => {
+                            if (result.correctCount >= result.totalQuestions * 0.7) {
+                              handleLessonComplete(currentLesson.id);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm prose prose-emerald max-w-none">
                     <ReactMarkdown>{currentLesson?.content}</ReactMarkdown>

@@ -7,7 +7,7 @@ export const seedDatabase = async () => {
     const courseRef = await addDoc(collection(db, 'courses'), {
       title: "إتقان الإملاء العربي",
       description: "دورة شاملة للمبتدئين لتعلم قواعد الإملاء الأساسية في اللغة العربية، من الهمزات إلى الألف الفارقة.",
-      thumbnail: "https://picsum.photos/seed/arabic/800/600",
+      thumbnail: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&w=800&q=80",
       level: "beginner",
       category: "spelling",
       duration: "3 أسابيع",
@@ -80,7 +80,7 @@ export const seedDatabase = async () => {
     await addDoc(collection(db, 'courses'), {
       title: "أساسيات النحو العربي",
       description: "تعلم المبتدأ والخبر، الفعل والفاعل، والجملة الاسمية والفعلية.",
-      thumbnail: "https://picsum.photos/seed/grammar/800/600",
+      thumbnail: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80",
       level: "beginner",
       category: "grammar",
       duration: "4 أسابيع",
@@ -94,7 +94,7 @@ export const seedDatabase = async () => {
     await addDoc(collection(db, 'courses'), {
       title: "علم الصرف الميسر",
       description: "دراسة الميزان الصرفي، المجرد والمزيد، وتصريف الأفعال.",
-      thumbnail: "https://picsum.photos/seed/morphology/800/600",
+      thumbnail: "https://images.unsplash.com/photo-1509062588-4a12a3babec0?auto=format&fit=crop&w=800&q=80",
       level: "intermediate",
       category: "morphology",
       duration: "5 أسابيع",
@@ -109,7 +109,7 @@ export const seedDatabase = async () => {
     await setDoc(doc(db, 'courses', dualCourseId), {
       title: "الدرس اللغوي: المثنى وصيغه",
       description: "درس شامل حول المثنى، صياغته من الأسماء المختلفة (صحيح، مقصور، منقوص، ممدود) وإعرابه.",
-      thumbnail: "https://picsum.photos/seed/dual/800/600",
+      thumbnail: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
       level: "2apic",
       category: "grammar",
       duration: "أسبوع واحد",
@@ -203,6 +203,48 @@ export const seedDatabase = async () => {
         }
       ]
     });
+
+    // 5. Seed Students for 3rd Prep
+    const studentsData = [
+      { fullName: 'منى مطهار', email: 'mona.matthar1@edu.local', accessCode: '3A-001', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'فاطمة الزهراء أعزيزي', email: 'fatimazahra.aazizi2@edu.local', accessCode: '3A-002', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'جهان البكرة', email: 'jihan.bakkra3@edu.local', accessCode: '3A-003', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'شيماء بالفقير', email: 'chaymae.balfakir4@edu.local', accessCode: '3A-004', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'سكينة حفيان', email: 'sakina.hafian5@edu.local', accessCode: '3A-005', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'حليمة كزيز', email: 'halima.kziz6@edu.local', accessCode: '3A-006', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'غزلان أفاريد', email: 'ghizlane.afarid7@edu.local', accessCode: '3A-007', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'حليمة اسماعيلي', email: 'halima.ismaili8@edu.local', accessCode: '3A-008', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'فاطمة الزهراء صاديق', email: 'fatimazahra.sadiq9@edu.local', accessCode: '3A-009', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'نورة عريف', email: 'noura.arif10@edu.local', accessCode: '3A-010', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'يوسف النكشاوي', email: 'youssef.nakchawi11@edu.local', accessCode: '3A-011', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'لبنى بقادير', email: 'lobna.bqadir12@edu.local', accessCode: '3A-012', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'يونس فكاك', email: 'younes.fekak13@edu.local', accessCode: '3A-013', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'سهام أخي', email: 'siham.akhi14@edu.local', accessCode: '3A-014', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'وداد البقالي', email: 'wadad.baqali15@edu.local', accessCode: '3A-015', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'محمد أزراولي', email: 'mohamed.azraouli16@edu.local', accessCode: '3A-016', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'فاطمة الزهراء أدميني', email: 'fatimazahra.admini17@edu.local', accessCode: '3A-017', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'إكرام الحجوجي', email: 'ikram.hajouji18@edu.local', accessCode: '3A-018', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'يوسف أحميمصة', email: 'youssef.ahmimsa19@edu.local', accessCode: '3A-019', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'جميلة العرصاوي', email: 'jamila.arsawi20@edu.local', accessCode: '3A-020', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'زينب كرومي', email: 'zineb.karoumi21@edu.local', accessCode: '3A-021', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'لكبيرة أعربان', email: 'lakbira.aerban22@edu.local', accessCode: '3A-022', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'ياسين صابر', email: 'yassin.saber23@edu.local', accessCode: '3A-023', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'سعد المتوكل', email: 'saad.motawakil24@edu.local', accessCode: '3A-024', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'هجار الهواري', email: 'hajar.houwari25@edu.local', accessCode: '3A-025', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'منى أرحى', email: 'mona.arha26@edu.local', accessCode: '3A-026', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'آية تمسنا', email: 'aya.temsna27@edu.local', accessCode: '3A-027', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'محمد الأمغاري', email: 'mohamed.amghari28@edu.local', accessCode: '3A-028', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'حميد العلواني', email: 'hamid.alwani29@edu.local', accessCode: '3A-029', classLevel: 'الثالثة إعدادي' },
+      { fullName: 'أنس جنان', email: 'anas.jnan30@edu.local', accessCode: '3A-030', classLevel: 'الثالثة إعدادي' }
+    ];
+
+    for (const student of studentsData) {
+      // Use accessCode as document ID for uniqueness and consistency
+      await setDoc(doc(db, 'students', student.accessCode), {
+        ...student,
+        createdAt: serverTimestamp()
+      }, { merge: true });
+    }
 
     return true;
   } catch (error) {

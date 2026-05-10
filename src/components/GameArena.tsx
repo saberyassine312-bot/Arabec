@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Gamepad2, Trophy, Star, Zap, Flame, 
   Gift, Target, Timer, Users, Lock, 
   Unlock, ChevronLeft, ChevronRight, Award,
   CheckCircle2, AlertCircle, RefreshCw, Crown,
-  TrendingUp, Calendar, Box, Sword, Compass
+  TrendingUp, Calendar, Box, Sword, Compass,
+  Brain, Puzzle
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -42,25 +44,29 @@ const GAME_MODES: GameMode[] = [
   { id: 'boss', title: 'التحدي النهائي', description: 'واجه الزعيم في نهاية كل وحدة لتحصل على نقاط مضاعفة.', icon: <Sword size={24} />, color: 'bg-red-500', type: 'boss', locked: true },
   { id: 'time', title: 'تحدي السرعة', description: 'أجب بأسرع ما يمكن! كلما كنت أسرع زادت نقاطك.', icon: <Timer size={24} />, color: 'bg-blue-500', type: 'time' },
   { id: 'leaderboard', title: 'لوحة الترتيب', description: 'نافس زملائك وكن من بين أفضل 10 متعلمين أسبوعياً.', icon: <Users size={24} />, color: 'bg-amber-500', type: 'leaderboard' },
+  { id: 'linguistic-series', title: 'سلسلة الألعاب اللغوية', description: '10 ألعاب متنوعة لتنمية مهارات التفكير والمعاني.', icon: <Puzzle size={24} />, color: 'bg-rose-500', type: 'external' },
+  { id: 'advanced', title: 'تحدي عباقرة اللغة', description: 'أسئلة متقدمة تشمل ملء الفراغات والصور مع شروحات مفصلة.', icon: <Brain size={24} />, color: 'bg-indigo-600', type: 'external' },
   { id: 'external', title: 'ألعاب خارجية', description: 'استمتع بألعاب Kahoot و Quizizz و Wordwall المدمجة.', icon: <Gamepad2 size={24} />, color: 'bg-pink-500', type: 'external' },
 ];
 
 const DAILY_QUESTIONS = [
-  { id: 1, text: "ما هو إعراب كلمة 'التلميذ' في جملة: 'جاء التلميذُ'؟", options: ["فاعل مرفوع", "مفعول به منصوب", "مبتدأ مرفوع", "خبر مرفوع"], correct: 0 },
-  { id: 2, text: "أي من هذه الأفعال هو فعل ماضٍ؟", options: ["يكتب", "اكتب", "كتب", "سيكتب"], correct: 2 },
-  { id: 3, text: "ما هي علامة رفع جمع المذكر السالم؟", options: ["الضمة", "الألف", "الواو", "الفتحة"], correct: 2 },
+  { id: 1, text: "ما هو إعراب كلمة 'التلميذ' في جملة: 'جاء التلميذُ'؟", options: ["فاعل مرفوع", "مفعول به منصوب", "مبتدأ مرفوع", "خبر مرفوع"], correct: 0, explanation: "التلميذُ فاعل لأنه هو من قام بالفعل (المجيء)، وعلامة رفعه الضمة الظاهرة." },
+  { id: 2, text: "أي من هذه الأفعال هو فعل ماضٍ؟", options: ["يكتب", "اكتب", "كتب", "سيكتب"], correct: 2, explanation: "الفعل 'كتب' يدل على حدث وقع وانتهى في الزمن الماضي." },
+  { id: 3, text: "ما هي علامة رفع جمع المذكر السالم؟", options: ["الضمة", "الألف", "الواو", "الفتحة"], correct: 2, explanation: "جمع المذكر السالم يُرفع بالواو (مثل: المؤمنون) وينصب ويجر بالياء." },
 ];
 
 export const GameArena: React.FC = () => {
   const [xp, setXp] = useState(0);
   const [streak, setStreak] = useState(3);
-  const [activeView, setActiveView] = useState<'arena' | 'daily' | 'leaderboard' | 'mystery'>('arena');
+  const [activeView, setActiveView] = useState<'arena' | 'daily' | 'leaderboard' | 'mystery' | 'advanced'>('arena');
   const [userBadges, setUserBadges] = useState<string[]>(['streak-master']);
   
   // Daily Challenge State
   const [dailyStep, setDailyStep] = useState(0);
   const [dailyScore, setDailyScore] = useState(0);
   const [dailyFinished, setDailyFinished] = useState(false);
+  const [showDailyFeedback, setShowDailyFeedback] = useState(false);
+  const [selectedDailyOption, setSelectedDailyOption] = useState<number | null>(null);
 
   // Level Calculation
   const getLevel = (points: number) => {
@@ -71,8 +77,13 @@ export const GameArena: React.FC = () => {
   };
 
   const currentLevel = getLevel(xp);
+  const navigate = useNavigate();
 
   const handleDailyAnswer = (idx: number) => {
+    if (showDailyFeedback) return;
+    
+    setSelectedDailyOption(idx);
+    setShowDailyFeedback(true);
     const isCorrect = idx === DAILY_QUESTIONS[dailyStep].correct;
     if (isCorrect) {
       setDailyScore(prev => prev + 10);
@@ -80,7 +91,11 @@ export const GameArena: React.FC = () => {
     } else {
       setXp(prev => Math.max(0, prev - 5));
     }
+  };
 
+  const nextDailyStep = () => {
+    setShowDailyFeedback(false);
+    setSelectedDailyOption(null);
     if (dailyStep < DAILY_QUESTIONS.length - 1) {
       setDailyStep(prev => prev + 1);
     } else {
@@ -145,7 +160,16 @@ export const GameArena: React.FC = () => {
                     key={mode.id}
                     whileHover={{ y: -8, scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => mode.id !== 'external' && setActiveView(mode.id as any)}
+                    onClick={() => {
+                      if (mode.locked) return;
+                      if (mode.id === 'advanced') {
+                        navigate('/advanced-quiz');
+                      } else if (mode.id === 'linguistic-series') {
+                        navigate('/linguistic-games');
+                      } else if (mode.id !== 'external') {
+                        setActiveView(mode.id as any);
+                      }
+                    }}
                     className={cn(
                       "relative p-8 rounded-[2.5rem] text-right transition-all border-2 group overflow-hidden",
                       mode.locked ? "bg-slate-50 border-slate-100 cursor-not-allowed" : "bg-white border-white shadow-xl shadow-slate-200/50 hover:border-emerald-100"
@@ -284,16 +308,46 @@ export const GameArena: React.FC = () => {
                       {DAILY_QUESTIONS[dailyStep].options.map((opt, i) => (
                         <button
                           key={i}
+                          disabled={showDailyFeedback}
                           onClick={() => handleDailyAnswer(i)}
-                          className="w-full p-6 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right font-bold text-lg hover:border-emerald-500 hover:bg-emerald-50 transition-all group flex items-center justify-between"
+                          className={cn(
+                            "w-full p-6 border-2 rounded-2xl text-right font-bold text-lg transition-all group flex items-center justify-between",
+                            !showDailyFeedback ? "bg-slate-50 border-slate-100 hover:border-emerald-500 hover:bg-emerald-50" :
+                            i === DAILY_QUESTIONS[dailyStep].correct ? "bg-emerald-50 border-emerald-500 text-emerald-700" :
+                            i === selectedDailyOption ? "bg-red-50 border-red-500 text-red-700" : "bg-slate-50 border-slate-100 opacity-50"
+                          )}
                         >
                           <span>{opt}</span>
-                          <div className="w-8 h-8 rounded-full border-2 border-slate-200 group-hover:border-emerald-500 flex items-center justify-center text-xs">
-                            {i + 1}
-                          </div>
+                          {showDailyFeedback && i === DAILY_QUESTIONS[dailyStep].correct && <CheckCircle2 size={24} className="text-emerald-600" />}
+                          {showDailyFeedback && i === selectedDailyOption && i !== DAILY_QUESTIONS[dailyStep].correct && <AlertCircle size={24} className="text-red-600" />}
                         </button>
                       ))}
                     </div>
+
+                    {showDailyFeedback && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-6"
+                      >
+                        <div className={cn(
+                          "p-6 rounded-2xl border-l-4",
+                          selectedDailyOption === DAILY_QUESTIONS[dailyStep].correct ? "bg-emerald-50 border-emerald-500 text-emerald-800" : "bg-red-50 border-red-500 text-red-800"
+                        )}>
+                          <div className="font-black mb-2">
+                            {selectedDailyOption === DAILY_QUESTIONS[dailyStep].correct ? "إجابة صحيحة! 🎉" : "إجابة خاطئة.. 💡"}
+                          </div>
+                          <p className="text-sm font-bold opacity-80">{DAILY_QUESTIONS[dailyStep].explanation}</p>
+                        </div>
+                        <button
+                          onClick={nextDailyStep}
+                          className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-xl flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all"
+                        >
+                          <span>{dailyStep === DAILY_QUESTIONS.length - 1 ? 'عرض النتيجة' : 'السؤال التالي'}</span>
+                          <ChevronLeft />
+                        </button>
+                      </motion.div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center space-y-8 py-8">

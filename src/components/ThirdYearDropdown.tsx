@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, PenTool, FileText, Library, ChevronDown, ChevronUp, PlayCircle } from 'lucide-react';
+import { BookOpen, PenTool, FileText, Library, ChevronDown, ChevronUp, PlayCircle, Sword } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 
@@ -41,6 +41,15 @@ export default function ThirdYearDropdown() {
       icon: <Library size={24} />, 
       color: 'bg-purple-50 text-purple-600',
       lessons: []
+    },
+    { 
+      id: 'adventure', 
+      title: 'مغامرات الجهوي (لعبة)', 
+      icon: <Sword size={24} />, 
+      color: 'bg-rose-50 text-rose-600',
+      lessons: [
+        { title: 'ابدأ مغامرة النجاح الآن 🎮', path: '/regional-adventure' }
+      ]
     },
   ];
 

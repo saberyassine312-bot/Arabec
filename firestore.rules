@@ -53,13 +53,14 @@ service cloud.firestore {
     
     function isAdmin() {
       return isAuthenticated() && 
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
-         (request.auth.token.email == "wadifamaroc60@gmail.com" && request.auth.token.email_verified == true));
+        (request.auth.token.email == "wadifamaroc60@gmail.com" && request.auth.token.email_verified == true);
     }
     
     function isTeacher() {
       return isAuthenticated() && 
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher' || isAdmin());
+        (isAdmin() || 
+         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher'));
     }
 
     function isValidEmail(email) {
@@ -109,12 +110,24 @@ service cloud.firestore {
              data.quizType is string &&
              data.quizTitle is string &&
              data.score is string &&
-             data.timestamp == request.time;
+             (data.timestamp == request.time || data.timestamp is timestamp);
+    }
+
+    function isValidStudent(data) {
+      return data.keys().hasAll(['fullName', 'email', 'accessCode', 'classLevel']) &&
+             data.fullName is string && data.fullName.size() < 200 &&
+             isValidEmail(data.email) &&
+             data.accessCode is string && data.accessCode.size() < 50 &&
+             data.classLevel is string && data.classLevel.size() < 100;
     }
 
     // ===============================================================
     // Rules
     // ===============================================================
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
 
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
@@ -122,8 +135,15 @@ service cloud.firestore {
       allow update: if (isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == resource.data.role) || isAdmin();
     }
 
+    match /students/{studentId} {
+      allow get: if true;
+      allow list: if isTeacher() || isAdmin();
+      allow create: if (isTeacher() || isAdmin()) && isValidStudent(request.resource.data);
+      allow update, delete: if isAdmin();
+    }
+
     match /courses/{courseId} {
-      allow read: if true; // Courses are public
+      allow read: if true;
       allow create: if isTeacher() && isValidCourse(request.resource.data);
       allow update: if (isTeacher() && resource.data.teacherId == request.auth.uid && isValidCourse(request.resource.data)) || isAdmin();
       allow delete: if (isTeacher() && resource.data.teacherId == request.auth.uid) || isAdmin();
@@ -146,8 +166,8 @@ service cloud.firestore {
     }
 
     match /certificates/{certificateId} {
-      allow read: if isAuthenticated(); // Certificates can be shared
-      allow create: if isAdmin(); // Only system/admin can issue certificates
+      allow read: if isAuthenticated();
+      allow create: if isAdmin();
       allow update, delete: if isAdmin();
     }
 
@@ -159,8 +179,21 @@ service cloud.firestore {
     }
 
     match /quizAttempts/{attemptId} {
-      allow read: if isAdmin();
+      allow read: if isTeacher() || isAdmin() || (isAuthenticated() && resource.data.studentData.uid == request.auth.uid);
       allow create: if isValidQuizAttempt(request.resource.data);
     }
+
+    match /liveSessions/{sessionId} {
+      allow read: if isAuthenticated();
+      allow create: if (isTeacher() || isAdmin()) && isValidLiveSession(request.resource.data);
+      allow update: if (isTeacher() && resource.data.teacherId == request.auth.uid && isValidLiveSession(request.resource.data)) || isAdmin();
+      allow delete: if (isTeacher() && resource.data.teacherId == request.auth.uid) || isAdmin();
+    }
+
+    match /grammarPaths/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) || isAdmin();
+    }
+
   }
 }

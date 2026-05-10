@@ -22,7 +22,8 @@ import {
   Award,
   Crown,
   Flame,
-  BookOpen
+  BookOpen,
+  Database
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -64,16 +65,25 @@ interface StudentLMSProfile {
   quizAttempts: QuizAttempt[];
 }
 
+interface StoredStudent {
+  id: string;
+  fullName: string;
+  email: string;
+  accessCode: string;
+  classLevel: string;
+}
+
 export const TeacherDashboard: React.FC = () => {
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
   const [lmsStudents, setLmsStudents] = useState<StudentLMSProfile[]>([]);
+  const [storedStudents, setStoredStudents] = useState<StoredStudent[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
   const [selectedSection, setSelectedSection] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<StudentProfile | null>(null);
   const [selectedLmsStudent, setSelectedLmsStudent] = useState<StudentLMSProfile | null>(null);
-  const [activeTab, setActiveTab] = useState<'students' | 'lms' | 'integration'>('lms');
+  const [activeTab, setActiveTab] = useState<'students' | 'lms' | 'integration' | 'database'>('database');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,6 +96,14 @@ export const TeacherDashboard: React.FC = () => {
           ...doc.data()
         })) as QuizAttempt[];
         setAttempts(attemptsData);
+
+        // Fetch Stored Students
+        const studentsSnapshot = await getDocs(collection(db, 'students'));
+        const studentsData = studentsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as StoredStudent[];
+        setStoredStudents(studentsData);
 
         // Fetch Users
         const usersSnapshot = await getDocs(collection(db, 'users'));
@@ -203,6 +221,15 @@ export const TeacherDashboard: React.FC = () => {
 
           <div className="flex flex-wrap gap-3">
             <button 
+              onClick={() => setActiveTab('database')}
+              className={cn(
+                "px-6 py-2.5 rounded-2xl font-bold transition-all",
+                activeTab === 'database' ? "bg-emerald-600 text-white shadow-lg shadow-emerald-100" : "bg-white text-gray-600 border border-gray-100"
+              )}
+            >
+              قاعدة بيانات التلاميذ
+            </button>
+            <button 
               onClick={() => setActiveTab('lms')}
               className={cn(
                 "px-6 py-2.5 rounded-2xl font-bold transition-all",
@@ -247,7 +274,94 @@ export const TeacherDashboard: React.FC = () => {
         </div>
 
         <div className="grid lg:grid-cols-[1fr_350px] gap-8">
-          {activeTab === 'lms' ? (
+          {activeTab === 'database' ? (
+            <div className="lg:col-span-2 space-y-6">
+              {/* Database View */}
+              <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 mb-6">
+                <div className="flex-1 relative">
+                  <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input 
+                    type="text"
+                    placeholder="ابحث عن تلميذ (الاسم، البريد، الكود)..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pr-12 pl-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                  />
+                </div>
+                <div className="relative">
+                  <select 
+                    value={selectedLevel}
+                    onChange={(e) => setSelectedLevel(e.target.value)}
+                    className="pr-10 pl-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500 appearance-none min-w-[140px]"
+                  >
+                    <option value="all">كل المستويات</option>
+                    <option value="الثالثة إعدادي">الثالثة إعدادي</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+                <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+                  <h3 className="text-xl font-black text-gray-900 flex items-center gap-3">
+                    <Database size={24} className="text-blue-600" />
+                    سجل تلاميذ المؤسسة
+                  </h3>
+                  <div className="text-xs font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full">
+                    {storedStudents.filter(s => 
+                      (selectedLevel === 'all' || s.classLevel === selectedLevel) &&
+                      (s.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                       s.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                       s.accessCode.toLowerCase().includes(searchTerm.toLowerCase()))
+                    ).length} تلميذ مسجل
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-right">
+                    <thead>
+                      <tr className="bg-gray-50/50 text-gray-400 text-xs font-black uppercase tracking-wider">
+                        <th className="px-8 py-4">كود الدخول</th>
+                        <th className="px-8 py-4">الاسم الكامل</th>
+                        <th className="px-8 py-4">البريد الإلكتروني</th>
+                        <th className="px-8 py-4">القسم</th>
+                        <th className="px-8 py-4"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {storedStudents
+                        .filter(s => 
+                          (selectedLevel === 'all' || s.classLevel === selectedLevel) &&
+                          (s.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           s.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           s.accessCode.toLowerCase().includes(searchTerm.toLowerCase()))
+                        )
+                        .map((student) => (
+                        <tr key={student.id} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="px-8 py-4">
+                            <span className="font-mono text-blue-600 font-bold bg-blue-50 px-3 py-1 rounded-lg">
+                              {student.accessCode}
+                            </span>
+                          </td>
+                          <td className="px-8 py-4">
+                            <div className="font-black text-gray-900">{student.fullName}</div>
+                          </td>
+                          <td className="px-8 py-4 text-gray-500 font-medium">
+                            {student.email}
+                          </td>
+                          <td className="px-8 py-4">
+                            <span className="text-xs font-bold text-gray-400">{student.classLevel}</span>
+                          </td>
+                          <td className="px-8 py-4 text-left">
+                            <button className="text-emerald-600 font-bold text-sm hover:underline">تتبع الأداء</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          ) : activeTab === 'lms' ? (
             <div className="lg:col-span-2 space-y-8">
               {/* LMS Analytics Table */}
               <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">

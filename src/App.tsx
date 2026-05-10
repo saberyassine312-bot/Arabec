@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { auth, db } from './lib/firebase';
 import { onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
-import { BookOpen, Play, CheckCircle, User, LogIn, LogOut, Layout, Video, Award, Menu, X, ChevronDown, ArrowRight, Clock, Target, GraduationCap, AlertCircle, Sun, Star, Lightbulb, Layers, BookCheck, Sparkles, Compass, Type, PenTool, Scale, Wind, History, MessageSquare, Sword, Gamepad2, Zap, Flame, LayoutDashboard, BookMarked, Brain, Users, Activity } from 'lucide-react';
+import { BookOpen, Play, CheckCircle, User, LogIn, LogOut, Layout, Video, Award, Menu, X, ChevronDown, ChevronLeft, ArrowRight, Clock, Target, GraduationCap, AlertCircle, Sun, Star, Lightbulb, Layers, BookCheck, Sparkles, Compass, Type, PenTool, Scale, Wind, History, MessageSquare, Sword, Gamepad2, Zap, Flame, LayoutDashboard, BookMarked, Brain, Users, Activity, Trophy, Database, BarChart3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from './lib/utils';
 
@@ -55,9 +55,35 @@ import { CertificateView } from './components/CertificateView';
 import { IntelligenceTest } from './components/IntelligenceTest';
 import { QuizRegistration } from './components/QuizRegistration';
 import { TeacherDashboard } from './components/TeacherDashboard';
+import { ThirdPrepDashboard } from './components/ThirdPrepDashboard';
+import { DataSeeder } from './components/DataSeeder';
 import { AdminDashboard } from './components/AdminDashboard';
+import { MorphologyModal } from './components/MorphologyModal';
+import { SpellingModal } from './components/SpellingModal';
+import { ArabicGamesCollection } from './components/ArabicGamesCollection';
+import { DashboardLayout } from './components/modern/DashboardLayout';
+import { ModernUserDashboard } from './components/modern/ModernUserDashboard';
+import { ModernAdminDashboard } from './components/modern/ModernAdminDashboard';
+import { ModernTeacherDashboard } from './components/modern/ModernTeacherDashboard';
+import { LessonManager } from './components/management/LessonManager';
+import { TeacherManager } from './components/management/TeacherManager';
+import { StudentManager } from './components/management/StudentManager';
+import { LearnerInsights } from './components/management/LearnerInsights';
+import { RemoteCommunicationDashboard } from './components/RemoteCommunicationDashboard';
 import SmartDashboard from './components/SmartDashboard';
 import { InteractiveLesson } from './components/InteractiveLesson';
+import SpecializationQuiz from './components/SpecializationQuiz';
+import ArabicLMSFirstYear from './components/ArabicLMSFirstYear';
+import ArabicLMSSecondYear from './components/ArabicLMSSecondYear';
+import ArabicLMSThirdYear from './components/ArabicLMSThirdYear';
+import { CalligraphyInteractiveLesson } from './components/CalligraphyInteractiveLesson';
+import LevelSelection from './components/LevelSelection';
+import PrepYearsSelection from './components/PrepYearsSelection';
+import AdvancedArabicQuiz from './components/AdvancedArabicQuiz';
+import { RegionalExamAdventure } from './components/RegionalExamAdventure';
+import GrammarSmartPath from './components/GrammarSmartPath';
+
+import { handleFirestoreError, OperationType } from './lib/firestoreUtils';
 
 // Components
 const Navbar = ({ user, loading }: { user: any; loading: boolean }) => {
@@ -75,7 +101,7 @@ const Navbar = ({ user, loading }: { user: any; loading: boolean }) => {
           uid: result.user.uid,
           email: result.user.email,
           displayName: result.user.displayName,
-          role: 'student',
+          role: result.user.email === 'wadifamaroc60@gmail.com' ? 'admin' : 'student',
           points: 0,
           progress: {},
           createdAt: new Date().toISOString()
@@ -128,16 +154,31 @@ const Navbar = ({ user, loading }: { user: any; loading: boolean }) => {
                     exit={{ opacity: 0, y: 10 }}
                     className="absolute top-full right-0 w-56 bg-white border border-gray-100 shadow-2xl rounded-2xl overflow-hidden py-3 z-50"
                   >
-                    {prepLevels.map((level) => (
-                      <Link 
-                        key={level} 
-                        to={`/lessons?level=${level}`}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
-                      >
-                        <div className="w-2 h-2 rounded-full bg-emerald-200"></div>
-                        {level}
-                      </Link>
-                    ))}
+                    {prepLevels.map((level) => {
+                      const lmsPath = level === 'السنة الأولى' ? '/first-year-lms' : 
+                                     level === 'السنة الثانية' ? '/second-year-lms' : '/third-year-lms';
+                      return (
+                        <div key={level} className="relative group/sub">
+                          <Link 
+                            to={lmsPath}
+                            className="flex items-center justify-between px-4 py-3 text-sm text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-2 h-2 rounded-full bg-emerald-200"></div>
+                              {level}
+                            </div>
+                            <ChevronLeft size={14} className="opacity-40" />
+                          </Link>
+                          {/* Submenu for Components */}
+                          <div className="absolute top-0 right-full w-56 bg-white border border-gray-100 shadow-2xl rounded-2xl hidden group-hover/sub:block py-2 mr-1 z-[60]">
+                             <div className="px-4 py-2 text-[10px] text-gray-400 font-black border-b border-gray-50 mb-1">مكونات المادة</div>
+                             <Link to={`${lmsPath}?component=texts`} className="block px-4 py-3 hover:bg-emerald-50 text-xs text-gray-600 font-bold">مكون النصوص</Link>
+                             <Link to={`${lmsPath}?component=grammar`} className="block px-4 py-3 hover:bg-emerald-50 text-xs text-gray-600 font-bold">مكون الدرس اللغوي</Link>
+                             <Link to={`${lmsPath}?component=composition`} className="block px-4 py-3 hover:bg-emerald-50 text-xs text-gray-600 font-bold">مكون التعبير والإنشاء</Link>
+                          </div>
+                        </div>
+                      )
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -170,10 +211,20 @@ const Navbar = ({ user, loading }: { user: any; loading: boolean }) => {
               <span>التعبير</span>
             </Link>
             {isTeacher && (
-              <Link to="/smart-admin" className="text-emerald-600 hover:text-emerald-700 transition-colors font-black flex items-center gap-2">
-                <Activity size={18} />
-                <span>لوحة التحكم الذكية</span>
-              </Link>
+              <>
+                <Link to="/third-prep-dashboard" className="text-emerald-600 hover:text-emerald-700 transition-colors font-black flex items-center gap-2">
+                  <BarChart3 size={18} />
+                  <span>نتائج الثالثة إعدادي</span>
+                </Link>
+                <Link to="/smart-admin" className="text-emerald-600 hover:text-emerald-700 transition-colors font-black flex items-center gap-2">
+                  <Activity size={18} />
+                  <span>لوحة التحكم الذكية</span>
+                </Link>
+                <Link to="/seed-data" className="text-gray-400 hover:text-emerald-600 transition-colors font-bold flex items-center gap-2">
+                  <Database size={16} />
+                  <span>تهيئة البيانات</span>
+                </Link>
+              </>
             )}
             {user && (
               <Link to={isTeacher ? "/dashboard" : "/student-dashboard"} className="text-emerald-600 hover:text-emerald-700 transition-colors font-black">
@@ -262,6 +313,8 @@ import { useGamification } from './hooks/useGamification';
 const Home = ({ user }: { user: any }) => {
   const { stats } = useGamification();
   const navigate = useNavigate();
+  const [isMorphologyOpen, setIsMorphologyOpen] = useState(false);
+  const [isSpellingOpen, setIsSpellingOpen] = useState(false);
   
   return (
     <div className="space-y-20 pb-20">
@@ -323,13 +376,25 @@ const Home = ({ user }: { user: any }) => {
                 transition={{ delay: 0.2 }}
                 className="flex flex-wrap gap-4"
               >
-                <Link to="/courses" className="bg-emerald-600 text-white px-10 py-4 rounded-2xl text-lg font-bold hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200 flex items-center gap-2">
-                  <span>استكشف الدورات</span>
+                <Link to="/levels" className="bg-emerald-600 text-white px-10 py-4 rounded-2xl text-lg font-bold hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200 flex items-center gap-2">
+                  <span>ابدأ التعلم</span>
                   <ArrowRight size={20} />
                 </Link>
                 <Link to="/game-arena" className="bg-white text-gray-900 border border-gray-200 px-10 py-4 rounded-2xl text-lg font-bold hover:bg-gray-50 transition-all flex items-center gap-2">
                   <Gamepad2 size={20} className="text-purple-500" />
                   <span>ساحة الألعاب</span>
+                </Link>
+                <Link to="/regional-adventure" className="bg-[#0f172a] text-white px-10 py-4 rounded-2xl text-lg font-black hover:bg-slate-800 transition-all shadow-xl shadow-rose-900/10 flex items-center gap-2 border border-rose-500/30">
+                  <Sword size={20} className="text-rose-500" />
+                  <span>مغامرات الجهوي 🎮</span>
+                </Link>
+                <Link to="/exercises" className="bg-white text-gray-900 border border-gray-200 px-10 py-4 rounded-2xl text-lg font-bold hover:bg-gray-50 transition-all flex items-center gap-2">
+                  <BookCheck size={20} className="text-orange-500" />
+                  <span>التمارين التفاعلية</span>
+                </Link>
+                <Link to="/composition" className="bg-white text-gray-900 border border-gray-200 px-10 py-4 rounded-2xl text-lg font-bold hover:bg-gray-50 transition-all flex items-center gap-2">
+                  <Type size={20} className="text-rose-500" />
+                  <span>التعبير والإنشاء</span>
                 </Link>
 
                 {user?.email === 'wadifamaroc60@gmail.com' && (
@@ -353,8 +418,8 @@ const Home = ({ user }: { user: any }) => {
             >
               <div className="relative rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white">
                 <img 
-                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80" 
-                  alt="Learning Arabic" 
+                  src="https://images.unsplash.com/photo-1509062588-4a12a3babec0?auto=format&fit=crop&w=1200&q=80" 
+                  alt="Middle School Students" 
                   className="w-full h-[600px] object-cover"
                   referrerPolicy="no-referrer"
                 />
@@ -388,11 +453,13 @@ const Home = ({ user }: { user: any }) => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-8">
           {[
             { id: 'grammar', title: 'النحو', icon: <BookMarked size={40} />, color: 'from-blue-500 to-indigo-600', shadow: 'shadow-blue-200', desc: 'أتقن قواعد بناء الجملة العربية وإعرابها بأسلوب تفاعلي.' },
             { id: 'morphology', title: 'الصرف', icon: <Brain size={40} />, color: 'from-purple-500 to-indigo-600', shadow: 'shadow-purple-200', desc: 'اكتشف أوزان الكلمات وكيفية اشتقاقها وتصريف الأفعال.' },
             { id: 'spelling', title: 'الإملاء', icon: <PenTool size={40} />, color: 'from-amber-500 to-orange-600', shadow: 'shadow-amber-200', desc: 'تعلم قواعد الرسم الإملائي الصحيح والهمزات وعلامات الترقيم.' },
+            { id: 'reading', title: 'الفهم القرائي', icon: <BookOpen size={40} />, color: 'from-emerald-500 to-teal-600', shadow: 'shadow-emerald-200', desc: 'طور مهاراتك في تحليل النصوص واستيعاب المقروء بعمق.' },
+            { id: 'writing', title: 'التعبير والإنشاء', icon: <Type size={40} />, color: 'from-rose-500 to-pink-600', shadow: 'shadow-rose-200', desc: 'عبر عن أفكارك بوضوح وقوة من خلال مهارات الكتابة الإبداعية.' },
           ].map((path, index) => (
             <motion.div
               key={path.id}
@@ -400,7 +467,13 @@ const Home = ({ user }: { user: any }) => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -10 }}
-              onClick={() => navigate(`/courses?category=${path.id}`)}
+              onClick={() => {
+                if (path.id === 'morphology') setIsMorphologyOpen(true);
+                else if (path.id === 'spelling') setIsSpellingOpen(true);
+                else if (path.id === 'grammar') navigate('/grammar-smart-path');
+                else if (path.id === 'writing') navigate('/composition');
+                else navigate(`/courses?category=${path.id}`);
+              }}
               className="bg-white p-10 rounded-[3rem] shadow-xl shadow-gray-100 border border-gray-50 flex flex-col items-center text-center group cursor-pointer"
             >
               <div className={`w-24 h-24 bg-gradient-to-br ${path.color} rounded-[2.5rem] flex items-center justify-center text-white mb-8 shadow-2xl ${path.shadow} group-hover:scale-110 transition-transform duration-500`}>
@@ -488,7 +561,7 @@ const Home = ({ user }: { user: any }) => {
                 </Link>
               </div>
               <div className="w-full md:w-1/2 aspect-square rounded-[2rem] overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80" alt="Gamification" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" referrerPolicy="no-referrer" />
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80" alt="Gamification" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" referrerPolicy="no-referrer" />
               </div>
             </div>
           </div>
@@ -529,7 +602,7 @@ const Home = ({ user }: { user: any }) => {
                 </Link>
               </div>
               <div className="w-full md:w-1/2 aspect-video rounded-[2rem] overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80" alt="Certificates" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" referrerPolicy="no-referrer" />
+                <img src="https://images.unsplash.com/photo-1577891771918-10313f360700?auto=format&fit=crop&w=600&q=80" alt="Learning Progress" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" referrerPolicy="no-referrer" />
               </div>
             </div>
           </div>
@@ -579,6 +652,9 @@ const Home = ({ user }: { user: any }) => {
           />
         </div>
       </section>
+
+      <MorphologyModal isOpen={isMorphologyOpen} onClose={() => setIsMorphologyOpen(false)} />
+      <SpellingModal isOpen={isSpellingOpen} onClose={() => setIsSpellingOpen(false)} />
     </div>
   );
 };
@@ -732,6 +808,30 @@ const Lessons = () => {
       hoverBg: 'group-hover:bg-emerald-100',
       btnColor: 'hover:bg-emerald-600',
       type: 'lesson'
+    },
+    {
+      id: 'reading-comprehension-1',
+      title: '📖 فن القراءة الاستيعابية',
+      description: 'تعلم تقنيات تحليل النصوص وفهم المعاني الضمنية والمباشرة بذكاء...',
+      category: 'الفهم القرائي',
+      level: 'متوسط',
+      icon: <BookOpen size={48} className="text-teal-200" />,
+      bgColor: 'bg-teal-50',
+      hoverBg: 'group-hover:bg-teal-100',
+      btnColor: 'hover:bg-teal-600',
+      type: 'lesson'
+    },
+    {
+      id: 'creative-writing-1',
+      title: '✍️ مهارات الكتابة الإبداعية',
+      description: 'اكتشف أسرار صياغة الجمل الرصينة وبناء الفقرات المتناسقة في الإنشاء...',
+      category: 'إنشاء',
+      level: 'متوسط',
+      icon: <Type size={48} className="text-rose-200" />,
+      bgColor: 'bg-rose-50',
+      hoverBg: 'group-hover:bg-rose-100',
+      btnColor: 'hover:bg-rose-600',
+      type: 'lesson'
     }
   ];
 
@@ -744,7 +844,8 @@ const Lessons = () => {
     { name: 'النحو', icon: <BookCheck size={18} />, color: 'text-emerald-600', bg: 'bg-emerald-100' },
     { name: 'الصرف', icon: <Zap size={18} />, color: 'text-blue-600', bg: 'bg-blue-100' },
     { name: 'إملاء', icon: <PenTool size={18} />, color: 'text-amber-600', bg: 'bg-amber-100' },
-    { name: 'إنشاء', icon: <PenTool size={18} />, color: 'text-rose-600', bg: 'bg-rose-100' }
+    { name: 'إنشاء', icon: <PenTool size={18} />, color: 'text-rose-600', bg: 'bg-rose-100' },
+    { name: 'الفهم القرائي', icon: <BookOpen size={18} />, color: 'text-teal-600', bg: 'bg-teal-100' }
   ];
 
   if (selectedLesson === 'parsing') return (
@@ -940,6 +1041,7 @@ const Exercises = () => {
   if (selectedGame === 'states') return renderQuiz("أحوال المبتدأ والخبر", "اختبار وحدة", SubjectPredicateStatesQuiz);
   if (selectedGame === 'subject-predicate') return renderQuiz("المبتدأ والخبر", "اختبار وحدة", SubjectAndPredicateQuiz);
   if (selectedGame === 'phrase') return renderQuiz("شبه الجملة", "اختبار وحدة", PhraseQuiz);
+  if (selectedGame === 'specialization') return renderQuiz("أسلوب الاختصاص", "اختبار وحدة", SpecializationQuiz);
   if (selectedGame === 'nominal-exam') return renderQuiz("الامتحان الشامل (الجملة الاسمية)", "امتحان شامل", NominalSentenceExam);
   if (selectedGame === 'exam') return renderQuiz("الامتحان الشامل (الجملة الفعلية)", "امتحان شامل", VerbalSentenceExam);
 
@@ -1073,6 +1175,23 @@ const Exercises = () => {
         <motion.button 
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
+          onClick={() => setSelectedGame('specialization')}
+          className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all text-right group flex flex-col h-full"
+        >
+          <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+            <Target size={32} />
+          </div>
+          <h3 className="text-2xl font-bold mb-3">أسلوب الاختصاص</h3>
+          <p className="text-gray-600 mb-6 flex-grow">تحدي شامل حول أسلوب الاختصاص للسنة الثالثة إعدادي.</p>
+          <div className="flex items-center gap-2 text-emerald-600 font-bold mt-auto">
+            <span>ابدأ اللعب</span>
+            <ArrowRight size={20} />
+          </div>
+        </motion.button>
+
+        <motion.button 
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => setSelectedGame('nominal-exam')}
           className="bg-white p-8 rounded-3xl border-2 border-amber-100 shadow-sm hover:shadow-xl transition-all text-right group flex flex-col h-full relative overflow-hidden"
         >
@@ -1177,6 +1296,7 @@ const LiveRedirect = () => {
 };
 
 import RegistrationForm from './components/RegistrationForm';
+import { LoginPage } from './components/LoginPage';
 
 const InteractiveLessonWrapper = () => {
   const navigate = useNavigate();
@@ -1197,13 +1317,15 @@ export default function App() {
       if (u) {
         setUser(u);
         // Listen to user profile changes
-        const unsubscribeProfile = onSnapshot(doc(db, 'users', u.uid), (doc) => {
-          if (doc.exists()) {
-            setUserProfile(doc.data());
+        const unsubscribeProfile = onSnapshot(doc(db, 'users', u.uid), (snapshot) => {
+          if (snapshot.exists()) {
+            setUserProfile(snapshot.data());
           } else {
             setUserProfile(null);
           }
           setLoading(false);
+        }, (error) => {
+          handleFirestoreError(error, OperationType.GET, `users/${u.uid}`);
         });
         return () => unsubscribeProfile();
       } else {
@@ -1223,39 +1345,55 @@ export default function App() {
     );
   }
 
-  // If logged in but profile is not complete, show registration form
-  if (user && !userProfile?.isProfileComplete && user.email !== 'wadifamaroc60@gmail.com') {
-    return <RegistrationForm userId={user.uid} onComplete={() => {}} />;
+  // If not logged in, show login page
+  if (!user) {
+    return <LoginPage onLoginSuccess={() => {}} />;
   }
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50 text-gray-900">
-        <Navbar user={user} loading={loading} />
-        <main>
-          <Routes>
-            <Route path="/" element={<Home user={user} />} />
-            <Route path="/courses" element={<CourseList />} />
-            <Route path="/course/:courseId" element={<CourseDetail />} />
-            <Route path="/course/:courseId/learn" element={<LessonPlayer />} />
-            <Route path="/certificate/:courseId" element={<CertificateView />} />
-            <Route path="/lessons" element={<Lessons />} />
-            <Route path="/exercises" element={<Exercises />} />
-            <Route path="/composition" element={<ArabicComposition />} />
-            <Route path="/whiteboard" element={<Whiteboard />} />
-            <Route path="/first-year-course" element={<FirstYearArabicCourse />} />
-            <Route path="/smart-admin" element={<SmartAdminPanel />} />
-            <Route path="/parsing-adventure" element={<ParsingCourse />} />
-            <Route path="/game-arena" element={<GameArena />} />
-            <Route path="/live-interviews" element={<LiveInterviews userRole={user?.email === 'wadifamaroc60@gmail.com' ? 'teacher' : 'student'} />} />
-            <Route path="/student-dashboard" element={<SmartDashboard />} />
-            <Route path="/lessons/dual" element={<DualLesson />} />
-            <Route path="/interactive-lesson" element={<InteractiveLessonWrapper />} />
-            <Route path="/live" element={<LiveRedirect />} />
-            <Route path="/dashboard" element={user?.email === 'wadifamaroc60@gmail.com' ? <AdminDashboard /> : <Home user={user} />} />
-          </Routes>
-        </main>
-      </div>
+      <DashboardLayout user={user}>
+        <Routes>
+          <Route path="/" element={<Home user={user} />} />
+          <Route path="/courses" element={<CourseList />} />
+          <Route path="/course/:courseId" element={<CourseDetail />} />
+          <Route path="/course/:courseId/learn" element={<LessonPlayer />} />
+          <Route path="/certificate/:courseId" element={<CertificateView />} />
+          <Route path="/lessons" element={<Lessons />} />
+          <Route path="/exercises" element={<Exercises />} />
+          <Route path="/composition" element={<ArabicComposition />} />
+          <Route path="/whiteboard" element={<Whiteboard />} />
+          <Route path="/first-year-course" element={<FirstYearArabicCourse />} />
+          <Route path="/levels" element={<LevelSelection />} />
+          <Route path="/prep-years" element={<PrepYearsSelection />} />
+          <Route path="/advanced-quiz" element={<AdvancedArabicQuiz />} />
+          <Route path="/first-year-lms" element={<ArabicLMSFirstYear />} />
+          <Route path="/second-year-lms" element={<ArabicLMSSecondYear />} />
+          <Route path="/third-year-lms" element={<ArabicLMSThirdYear />} />
+          <Route path="/third-prep-dashboard" element={<ThirdPrepDashboard />} />
+          <Route path="/seed-data" element={<DataSeeder />} />
+          <Route path="/smart-admin" element={<SmartAdminPanel />} />
+          <Route path="/parsing-adventure" element={<ParsingCourse />} />
+          <Route path="/game-arena" element={<GameArena />} />
+          <Route path="/linguistic-games" element={<ArabicGamesCollection />} />
+          <Route path="/regional-adventure" element={<RegionalExamAdventure />} />
+          <Route path="/grammar-smart-path" element={<GrammarSmartPath />} />
+          <Route path="/live-interviews" element={<LiveInterviews userRole={user?.email === 'wadifamaroc60@gmail.com' ? 'teacher' : 'student'} />} />
+          <Route path="/remote-communication" element={<RemoteCommunicationDashboard user={user} />} />
+          <Route path="/student-dashboard" element={<ModernUserDashboard />} />
+          <Route path="/lessons/dual" element={<DualLesson />} />
+          <Route path="/interactive-lesson" element={<InteractiveLessonWrapper />} />
+          <Route path="/interactive/calligraphy" element={<CalligraphyInteractiveLesson />} />
+          <Route path="/live" element={<LiveRedirect />} />
+          <Route path="/dashboard" element={user?.role === 'admin' || user?.email === 'wadifamaroc60@gmail.com' ? <ModernAdminDashboard /> : <ModernUserDashboard />} />
+          <Route path="/teacher-dashboard" element={<ModernTeacherDashboard />} />
+          <Route path="/admin/lessons" element={<LessonManager />} />
+          <Route path="/admin/teachers" element={<TeacherManager />} />
+          <Route path="/admin/students" element={<StudentManager />} />
+          <Route path="/admin/insights" element={<LearnerInsights />} />
+          <Route path="/admin/stats" element={<ModernAdminDashboard />} />
+        </Routes>
+      </DashboardLayout>
     </Router>
   );
 }

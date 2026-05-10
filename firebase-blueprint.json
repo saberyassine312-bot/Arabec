@@ -129,16 +129,73 @@
         "timestamp": { "type": "string", "format": "date-time" }
       },
       "required": ["studentData", "quizType", "score", "timestamp"]
+    },
+    "Exam": {
+      "title": "Exam",
+      "description": "A specific exam or quiz",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "type": { "type": "string" }
+      },
+      "required": ["title", "type"]
+    },
+    "ExamResult": {
+      "title": "Exam Result",
+      "description": "A student's score in a specific exam",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string" },
+        "examId": { "type": "string" },
+        "score": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["studentId", "examId", "score"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "A student record in a specific class",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string", "description": "الاسم الكامل" },
+        "email": { "type": "string", "description": "البريد الإلكتروني" },
+        "accessCode": { "type": "string", "description": "رمز الدخول" },
+        "classLevel": { "type": "string", "description": "القسم الدراسي" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fullName", "email", "accessCode", "classLevel"]
+    },
+    "LiveSession": {
+      "title": "Live Session",
+      "description": "Google Meet virtual class session",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Session title" },
+        "teacherId": { "type": "string", "description": "UID of the teacher" },
+        "teacherName": { "type": "string", "description": "Name of the teacher" },
+        "subject": { "type": "string", "description": "Subject of the class" },
+        "dateTime": { "type": "string", "format": "date-time", "description": "Start time" },
+        "duration": { "type": "number", "description": "Duration in minutes" },
+        "meetLink": { "type": "string", "description": "Google Meet URL" },
+        "status": { "type": "string", "enum": ["upcoming", "live", "ended"] },
+        "targetLevel": { "type": "string", "description": "Target grade level" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "teacherId", "dateTime", "meetLink", "status"]
     }
   },
   "firestore": {
     "/users/{uid}": { "schema": "User", "description": "User profiles" },
+    "/students/{studentId}": { "schema": "Student", "description": "Class students" },
     "/courses/{courseId}": { "schema": "Course", "description": "Courses" },
     "/courses/{courseId}/modules/{moduleId}": { "schema": "Module", "description": "Modules within a course" },
     "/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}": { "schema": "Lesson", "description": "Lessons within a module" },
     "/enrollments/{enrollmentId}": { "schema": "Enrollment", "description": "Student enrollments" },
     "/certificates/{certificateId}": { "schema": "Certificate", "description": "Issued certificates" },
     "/comments/{commentId}": { "schema": "Comment", "description": "Course comments" },
-    "/quizAttempts/{attemptId}": { "schema": "QuizAttempt", "description": "Quiz attempts and results" }
+    "/quizAttempts/{attemptId}": { "schema": "QuizAttempt", "description": "Quiz attempts and results" },
+    "/exams/{examId}": { "schema": "Exam", "description": "LMS Exams" },
+    "/examResults/{resultId}": { "schema": "ExamResult", "description": "LMS Exam Results" },
+    "/liveSessions/{sessionId}": { "schema": "LiveSession", "description": "Live virtual classes" }
   }
 }

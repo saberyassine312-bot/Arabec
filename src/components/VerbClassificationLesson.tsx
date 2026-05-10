@@ -433,11 +433,86 @@ export default function VerbClassificationLesson() {
         )}
       </section>
 
-      {/* 10. Goal */}
+      {/* 10. Common Spelling Errors */}
+      <section className="mb-12">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-red-100 text-red-600 rounded-lg flex items-center justify-center">
+            <AlertCircle size={24} />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800">10. أخطاء إملائية شائعة</h2>
+        </div>
+        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-8">
+          <p className="text-gray-600 font-bold">يقع الكثير من المتعلمين في أخطاء إملائية عند كتابة الأفعال الصحيحة والمعتلة، إليك أهمها لتجنبها:</p>
+          
+          <div className="space-y-6">
+            {/* Error 1 */}
+            <div className="p-6 bg-red-50/50 rounded-2xl border border-red-100">
+              <h3 className="font-bold text-red-800 mb-4 flex items-center gap-2 text-lg">
+                📌 الألف اللينة في الفعل الناقص
+              </h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-red-200">
+                  <div className="text-xs text-red-400 font-black mb-2 uppercase tracking-wider">❌ الخطأ الإملائي:</div>
+                  <div className="text-2xl font-black text-gray-400 line-through decoration-red-500 decoration-2">دَعَى | رَمَا</div>
+                </div>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border-2 border-emerald-500">
+                  <div className="text-xs text-emerald-500 font-black mb-2 uppercase tracking-wider">✅ الكتابة الصحيحة:</div>
+                  <div className="text-2xl font-black text-emerald-600">دَعَا | رَمَى</div>
+                </div>
+              </div>
+              <div className="mt-4 p-4 bg-white/50 rounded-xl text-sm leading-relaxed">
+                <span className="font-bold text-red-700">تذكير:</span> إذا كان أصل الألف واواً (يدعُ<span className="text-blue-600">و</span>) نكتبها ممدودة <span className="font-black text-lg">"ا"</span>، وإذا كان أصلها ياءً (يرمِ<span className="text-blue-600">ي</span>) نكتبها مقصورة <span className="font-black text-lg">"ى"</span>.
+              </div>
+            </div>
+
+            {/* Error 2 */}
+            <div className="p-6 bg-red-50/50 rounded-2xl border border-red-100">
+              <h3 className="font-bold text-red-800 mb-4 flex items-center gap-2 text-lg">
+                📌 حذف حرف العلة في الجزم والأمر
+              </h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-red-200">
+                  <div className="text-xs text-red-400 font-black mb-2 uppercase tracking-wider">❌ الخطأ الإملائي:</div>
+                  <div className="text-2xl font-black text-gray-400 line-through decoration-red-500 decoration-2">لا تَمْشِي | ادْعُو</div>
+                </div>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border-2 border-emerald-500">
+                  <div className="text-xs text-emerald-500 font-black mb-2 uppercase tracking-wider">✅ الكتابة الصحيحة:</div>
+                  <div className="text-2xl font-black text-emerald-600">لا تَمْشِ | ادْعُ</div>
+                </div>
+              </div>
+              <div className="mt-4 p-4 bg-white/50 rounded-xl text-sm leading-relaxed">
+                <span className="font-bold text-red-700">تذكير:</span> الفعل المعتل الآخر يُحذف حرف علته عند الجزم (لا الناهية) أو في صيغة الأمر. لا تترك حرف العلة مكانه!
+              </div>
+            </div>
+
+            {/* Error 3 */}
+            <div className="p-6 bg-red-50/50 rounded-2xl border border-red-100">
+              <h3 className="font-bold text-red-800 mb-4 flex items-center gap-2 text-lg">
+                📌 رسم الهمزة في الفعل المهموز
+              </h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-red-200">
+                  <div className="text-xs text-red-400 font-black mb-2 uppercase tracking-wider">❌ الخطأ الإملائي:</div>
+                  <div className="text-2xl font-black text-gray-400 line-through decoration-red-500 decoration-2">قرأو | سألة</div>
+                </div>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border-2 border-emerald-500">
+                  <div className="text-xs text-emerald-500 font-black mb-2 uppercase tracking-wider">✅ الكتابة الصحيحة:</div>
+                  <div className="text-2xl font-black text-emerald-600">قَرَؤوا | سَأَلَ</div>
+                </div>
+              </div>
+              <div className="mt-4 p-4 bg-white/50 rounded-xl text-sm leading-relaxed">
+                <span className="font-bold text-red-700">تذكير:</span> تحكم الهمزة المتوسطة والمتطرفة قواعد دقيقة تعتمد على حركتها وحركة ما قبلها، فاحرص على مراجعة "قاعدة أقوى الحركات".
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 11. Goal */}
       <section className="mb-12">
         <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <Target size={24} className="text-emerald-600" /> 10. هدف الدرس
+            <Target size={24} className="text-emerald-600" /> 11. هدف الدرس
           </h2>
           <div className="grid sm:grid-cols-3 gap-6">
             <div className="p-4 bg-gray-50 rounded-2xl text-center">

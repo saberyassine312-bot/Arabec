@@ -95,27 +95,24 @@ const ArabicComposition: React.FC = () => {
     setError(null);
     try {
       const base64Data = base64Image.split(',')[1];
+      
       const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: [{
-          role: 'user',
-          parts: [
-            {
-              inlineData: {
-                mimeType: mimeType,
-                data: base64Data
-              }
-            },
-            {
-              text: "أنت خبير في التعرف الضوئي على الحروف (OCR) للغة العربية. استخرج النص العربي الموجود في هذه الصورة أو الملف بدقة عالية. حافظ على ترتيب الفقرات والأسطر. لا تضف أي تعليقات أو شرح، فقط النص المستخرج."
+        model: "gemini-3-flash-preview",
+        contents: [
+          {
+            inlineData: {
+              mimeType: mimeType,
+              data: base64Data
             }
-          ]
-        }]
+          },
+          "أنت خبير في التعرف الضوئي على الحروف (OCR) للغة العربية. استخرج النص العربي الموجود في هذه الصورة أو الملف بدقة عالية. حافظ على ترتيب الفقرات والأسطر. لا تضف أي تعليقات أو شرح، فقط النص المستخرج."
+        ]
       });
 
       const extractedText = response.text;
+      
       if (extractedText) {
-        setText(extractedText);
+        setText(extractedText.trim());
         setInputMode('text');
       } else {
         setError("لم يتم العثور على نص في الصورة.");
@@ -129,32 +126,42 @@ const ArabicComposition: React.FC = () => {
     }
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    // You could add a toast here if available, but for now we'll just rely on the UI feedback
+  };
+
+  const applyCorrection = () => {
+    if (result) {
+      setText(result.correctedText);
+      setStage('input');
+      setResult(null);
+    }
+  };
+
   const startHighlightStage = async () => {
     if (!text.trim()) return;
     setIsAnalyzing(true);
     setError(null);
 
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: [{
-          role: 'user',
-          parts: [{
-            text: `أنت أداة تعليمية ذكية لتصحيح النصوص باللغة العربية.
+      const prompt = `أنت أداة تعليمية ذكية لتصحيح النصوص باللغة العربية.
             المرحلة 2: عرض النص مع تظليل.
             أعد عرض النص التالي كما هو تماماً، لكن قم بوضع الكلمات التي تحتوي على أخطاء محتملة (إملائية، نحوية، أو تركيبية) بين وسوم <error> و </error>.
             قواعد صارمة:
             1. لا تشرح أي شيء.
-            2. لا تضع ملاحظات.
+            2. لا تضغ ملاحظات.
             3. لا تعطي إجابة أو تصحيح.
             4. فقط ضع الوسوم حول الكلمات الخاطئة داخل النص الأصلي.
             
-            النص: "${text}"`
-          }]
-        }]
-      });
+            النص: "${text}"`;
 
-      const rawText = response.text;
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: prompt
+      });
+      
+      const rawText = response.text || "";
       setHighlightedText(rawText);
       setStage('highlight');
     } catch (err) {
@@ -171,40 +178,15 @@ const ArabicComposition: React.FC = () => {
     setError(null);
 
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: [{
-          role: 'user',
-          parts: [{
-            text: `أنت أداة تعليمية ذكية لتصحيح النصوص باللغة العربية.
+      const prompt = `أنت أداة تعليمية ذكية لتصحيح النصوص باللغة العربية.
             المرحلة 3: التصحيح النهائي والشرح.
             قم بتصحيح النص التالي كاملاً بشكل صحيح، ثم اشرح الأخطاء التي وقع فيها المتعلم مع ذكر القاعدة النحوية أو الإملائية لكل خطأ بأسلوب مبسط.
             
-            النص: "${text}"
-            
-            يجب أن يكون الرد بتنسيق JSON حصراً كالتالي:
-            {
-              "correctedText": "النص الكامل بعد التصحيح",
-              "corrections": [
-                {
-                  "original": "الكلمة الخاطئة",
-                  "corrected": "التصحيح",
-                  "type": "spelling" | "grammar" | "structure",
-                  "explanation": "شرح الخطأ",
-                  "rule": "القاعدة اللغوية"
-                }
-              ],
-              "rating": "التقييم العام",
-              "stats": {
-                "errorCount": 0,
-                "spellingErrors": 0,
-                "grammarErrors": 0,
-                "structureErrors": 0
-              },
-              "suggestions": ["نصيحة 1", "نصيحة 2"]
-            }`
-          }]
-        }],
+            النص: "${text}"`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: prompt,
         config: {
           responseMimeType: "application/json",
           responseSchema: {
@@ -246,7 +228,7 @@ const ArabicComposition: React.FC = () => {
         }
       });
 
-      const analysis = JSON.parse(response.text);
+      const analysis = JSON.parse(response.text || "{}");
       setResult(analysis);
       setStage('final');
     } catch (err) {
@@ -441,17 +423,29 @@ const ArabicComposition: React.FC = () => {
                 </div>
               )}
 
-              <div className="mt-8 flex justify-end">
+              <div className="mt-8 flex flex-wrap justify-end gap-4">
                 <button
                   onClick={startHighlightStage}
                   disabled={!text.trim() || isAnalyzing || isOcrLoading}
                   className={cn(
-                    "flex items-center gap-3 px-10 py-4 rounded-2xl text-lg font-bold transition-all shadow-lg",
+                    "flex-1 md:flex-none flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-lg font-bold transition-all shadow-lg",
+                    text.trim() && !isAnalyzing && !isOcrLoading ? "bg-white text-emerald-600 border-2 border-emerald-100 hover:bg-emerald-50 shadow-emerald-50" : "bg-gray-50 text-gray-400 cursor-not-allowed shadow-none"
+                  )}
+                >
+                  {isAnalyzing && stage === 'input' ? <RefreshCw className="animate-spin" size={20} /> : <AlertCircle size={20} />}
+                  <span>اكتشاف الأخطاء وتظليلها</span>
+                </button>
+
+                <button
+                  onClick={startFinalStage}
+                  disabled={!text.trim() || isAnalyzing || isOcrLoading}
+                  className={cn(
+                    "flex-1 md:flex-none flex items-center justify-center gap-3 px-10 py-4 rounded-2xl text-lg font-bold transition-all shadow-lg",
                     text.trim() && !isAnalyzing && !isOcrLoading ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-200" : "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
                   )}
                 >
-                  {isAnalyzing ? <RefreshCw className="animate-spin" size={20} /> : <Send size={20} />}
-                  <span>تظليل الأخطاء</span>
+                  {isAnalyzing && stage !== 'input' ? <RefreshCw className="animate-spin" size={20} /> : <Sparkles size={20} />}
+                  <span>التصحيح التلقائي والشرح</span>
                 </button>
               </div>
             </div>
@@ -537,11 +531,38 @@ const ArabicComposition: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 font-bold text-gray-700">نصك الأخير</div>
+                <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 font-bold text-gray-700 flex justify-between items-center">
+                  <span>نصك الأخير</span>
+                  <button 
+                    onClick={() => copyToClipboard(text)}
+                    className="text-gray-400 hover:text-emerald-600 transition-colors"
+                    title="نسخ النص"
+                  >
+                    <Upload size={16} className="rotate-180" />
+                  </button>
+                </div>
                 <div className="p-8 text-lg leading-relaxed" dir="rtl">{renderFinalHighlightedText()}</div>
               </div>
               <div className="bg-emerald-50/30 rounded-3xl border border-emerald-100 shadow-sm overflow-hidden">
-                <div className="bg-emerald-50 px-6 py-4 border-b border-emerald-100 font-bold text-emerald-700">التصحيح النهائي</div>
+                <div className="bg-emerald-50 px-6 py-4 border-b border-emerald-100 font-bold text-emerald-700 flex justify-between items-center">
+                  <span>التصحيح النهائي</span>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => copyToClipboard(result.correctedText)}
+                      className="text-emerald-400 hover:text-emerald-600 transition-colors p-2"
+                      title="نسخ التصحيح"
+                    >
+                      <Upload size={20} className="rotate-180" />
+                    </button>
+                    <button 
+                      onClick={applyCorrection}
+                      className="bg-emerald-600 text-white px-4 py-2 rounded-xl hover:bg-emerald-700 transition-all flex items-center gap-2 font-bold"
+                    >
+                      <Check size={18} />
+                      <span>اعتماد التصحيح</span>
+                    </button>
+                  </div>
+                </div>
                 <div className="p-8 text-lg leading-relaxed text-gray-800" dir="rtl">{result.correctedText}</div>
               </div>
             </div>
