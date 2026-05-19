@@ -1,5 +1,6 @@
 import React from 'react';
 import { QuizComponent } from './QuizComponent';
+import { AssessmentType } from '../lib/smartCorrector';
 import { motion } from 'framer-motion';
 import { Brain } from 'lucide-react';
 
@@ -73,6 +74,7 @@ export default function AdvancedArabicQuiz() {
         </motion.div>
 
         <QuizComponent 
+          type={AssessmentType.SUMMATIVE}
           questions={questions} 
           onComplete={handleComplete} 
           title="تحدي اللغة العربية"

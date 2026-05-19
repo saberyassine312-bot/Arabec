@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { QuizComponent } from './QuizComponent';
+import { AssessmentType } from '../lib/smartCorrector';
 import { QuizRegistration } from './QuizRegistration';
 import { InteractiveLesson } from './InteractiveLesson';
 import { cn } from '../lib/utils';
@@ -338,6 +339,7 @@ export const LessonPlayer: React.FC = () => {
                     <QuizRegistration quizTitle={currentLesson.title} quizType="اختبار وحدة">
                       {(studentData, onCompleteResult) => (
                         <QuizComponent 
+                          type={AssessmentType.FORMATIVE}
                           questions={currentLesson.questions || []} 
                           onComplete={(result) => {
                             onCompleteResult(result);
@@ -409,6 +411,7 @@ export const LessonPlayer: React.FC = () => {
                            <h3 className="text-2xl font-black text-gray-900">اختبر فهمك للدرس</h3>
                         </div>
                         <QuizComponent 
+                          type={AssessmentType.INTERACTIVE}
                           questions={currentLesson.questions} 
                           onComplete={(result) => {
                             if (result.correctCount >= result.totalQuestions * 0.7) {

@@ -16,6 +16,9 @@ import {
 import { GoogleGenAI } from '@google/genai';
 import { QuizComponent } from './QuizComponent';
 import { handleFirestoreError, OperationType } from '../lib/firestoreUtils';
+import { ClipboardCheck } from 'lucide-react';
+
+import { AssessmentType } from '../lib/smartCorrector';
 
 // --- Data & Types ---
 
@@ -57,7 +60,7 @@ export default function GrammarSmartPath() {
   const [activeLevel, setActiveLevel] = useState<number>(3); // Default to 3rd Prep
   const [userPath, setUserPath] = useState<any>(null);
   const [selectedLesson, setSelectedLesson] = useState<SmartLesson | null>(null);
-  const [view, setView] = useState<'map' | 'lesson' | 'quiz' | 'tutor'>('map');
+  const [view, setView] = useState<'map' | 'lesson' | 'quiz' | 'tutor' | 'diagnostic'>('map');
   const [loading, setLoading] = useState(true);
   const [aiResponse, setAiResponse] = useState<string>('');
   const [aiLoading, setAiLoading] = useState(false);
@@ -156,21 +159,31 @@ export default function GrammarSmartPath() {
              </div>
           </div>
 
-          <div className="flex bg-white p-1.5 rounded-3xl border border-slate-100 shadow-sm">
-            {[1, 2, 3].map((num) => (
-              <button
-                key={num}
-                onClick={() => setActiveLevel(num)}
-                className={cn(
-                  "px-6 py-2.5 rounded-2xl font-black text-sm transition-all",
-                  activeLevel === num 
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" 
-                    : "text-slate-400 hover:text-slate-600"
-                )}
-              >
-                السنة {num === 1 ? 'الأولى' : num === 2 ? 'الثانية' : 'الثالثة'}
-              </button>
-            ))}
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+             <button 
+               onClick={() => setView('diagnostic')}
+               className="px-6 py-3 bg-white border-2 border-indigo-600 text-indigo-600 rounded-2xl font-black text-sm flex items-center gap-3 hover:bg-indigo-50 transition-all shadow-sm"
+             >
+                <ClipboardCheck size={20} />
+                <span>إجراء اختبار تشخيصي</span>
+             </button>
+
+             <div className="flex bg-white p-1.5 rounded-3xl border border-slate-100 shadow-sm">
+               {[1, 2, 3].map((num) => (
+                 <button
+                   key={num}
+                   onClick={() => setActiveLevel(num)}
+                   className={cn(
+                     "px-6 py-2.5 rounded-2xl font-black text-sm transition-all",
+                     activeLevel === num 
+                       ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" 
+                       : "text-slate-400 hover:text-slate-600"
+                   )}
+                 >
+                   السنة {num === 1 ? 'الأولى' : num === 2 ? 'الثانية' : 'الثالثة'}
+                 </button>
+               ))}
+             </div>
           </div>
         </div>
 
@@ -442,6 +455,71 @@ export default function GrammarSmartPath() {
             </motion.div>
           )}
 
+          {view === 'diagnostic' && (
+            <motion.div 
+              key="diagnostic"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="max-w-3xl mx-auto"
+            >
+              <div className="bg-white p-10 rounded-[4rem] border border-slate-100 shadow-2xl">
+                 <div className="flex items-center gap-4 mb-10">
+                    <button onClick={() => setView('map')} className="p-3 bg-slate-50 rounded-xl text-slate-400 hover:text-indigo-600"><ChevronRight size={20} /></button>
+                    <div>
+                      <h2 className="text-3xl font-black text-slate-900 mb-2">الاختبار التشخيصي الشامل</h2>
+                      <p className="text-slate-400 font-bold">قياس المكتسبات القبلية لتحديد مسار التعلم الأمثل</p>
+                    </div>
+                 </div>
+
+                 <QuizComponent 
+                    type={AssessmentType.DIAGNOSTIC}
+                    title="التقويم التشخيصي لمادة اللغة العربية"
+                    questions={[
+                      {
+                        id: 1,
+                        text: 'ما هي أركان الجملة الفعلية الأساسية؟',
+                        options: ['المبتدأ والخبر', 'الفعل والفاعل', 'الناسخ واسمه'],
+                        correctAnswer: 1,
+                        explanation: 'الجملة الفعلية تتكون أساساً من فعل وفاعل.'
+                      },
+                      {
+                        id: 2,
+                        text: 'أي من الكلمات التالية تعتبر من أخوات كان؟',
+                        options: ['لعل', 'صار', 'لكن'],
+                        correctAnswer: 1,
+                        explanation: 'صار من النواسخ الفعلية (أخوات كان)، بينما لعل ولكن من النواسخ الحرفية.'
+                      },
+                      {
+                        id: 3,
+                        text: 'ما هو إعراب الفاعل دائماً؟',
+                        options: ['منصوب', 'مجرور', 'مرفوع'],
+                        correctAnswer: 2,
+                        explanation: 'الفاعل في اللغة العربية دائماً ما يكون مرفوعاً.'
+                      },
+                      {
+                        id: 4,
+                        text: 'ما نوع الخبر في جملة "العلمُ ينفعُ صاحبَه"؟',
+                        options: ['مفرد', 'جملة فعلية', 'شبه جملة'],
+                        correctAnswer: 1,
+                        explanation: 'الخبر هنا هو الفعل "ينفع" وفاعله، فهو جملة فعلية.'
+                      },
+                      {
+                        id: 5,
+                        text: 'أداة الجزم "لم" تدخل على أي فعل؟',
+                        options: ['الماضي', 'الأمر', 'المضارع'],
+                        correctAnswer: 2,
+                        explanation: 'أدوات الجزم تدخل حصراً على الفعل المضارع فتجزمه.'
+                      }
+                    ]}
+                    onComplete={(result) => {
+                      console.log("Diagnostic Complete:", result);
+                      // Custom logic for diagnostic result if needed
+                    }}
+                 />
+              </div>
+            </motion.div>
+          )}
+
           {view === 'quiz' && selectedLesson && (
             <motion.div 
               key="quiz"
@@ -456,6 +534,7 @@ export default function GrammarSmartPath() {
                  </div>
 
                  <QuizComponent 
+                    type={AssessmentType.FORMATIVE}
                     questions={[
                       {
                         id: 1,

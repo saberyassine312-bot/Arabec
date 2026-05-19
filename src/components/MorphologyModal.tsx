@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Scale, Search, BookOpen, Sparkles, 
-  ArrowLeft, CheckCircle2, AlertCircle, Info 
+  ArrowLeft, CheckCircle2, AlertCircle, Info, 
+  ChevronRight, ChevronLeft, Brain, PlayCircle, Star, Scale as ScaleIcon
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { morphologyLessons, MorphologyLessonData } from '../lib/morphologyData';
+import { MorphologyInteractiveUnit } from './MorphologyInteractiveUnit';
 
 interface MorphologyModalProps {
   isOpen: boolean;
@@ -12,7 +15,8 @@ interface MorphologyModalProps {
 }
 
 export const MorphologyModal: React.FC<MorphologyModalProps> = ({ isOpen, onClose }) => {
-  const [view, setView] = useState<'selection' | 'explanation' | 'analyzer'>('selection');
+  const [view, setView] = useState<'selection' | 'analyzer'>('selection');
+  const [selectedLesson, setSelectedLesson] = useState<MorphologyLessonData | null>(null);
   const [word, setWord] = useState('');
   const [result, setResult] = useState<{ word: string; root: string; weight: string; explanation: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +59,7 @@ export const MorphologyModal: React.FC<MorphologyModalProps> = ({ isOpen, onClos
       weight = "مَفْعول";
       explanation = `زيدت الميم في أول الكلمة والواو قبل الحرف الأخير.`;
     }
-    // Pattern: افتعال (e.g. استخراج is length 7, but let's check basic ones)
+    // Pattern: افتعال
     else if (len === 6 && cleanWord[0] === 'ا' && cleanWord[2] === 'ت' && cleanWord[4] === 'ا') {
       root = cleanWord[1] + cleanWord[3] + cleanWord[5];
       weight = "افتعال";
@@ -67,12 +71,6 @@ export const MorphologyModal: React.FC<MorphologyModalProps> = ({ isOpen, onClos
       weight = "انْفَعَلَ";
       explanation = `زيدت الألف والنون في أول الكلمة.`;
     }
-    // Pattern: فعّال (e.g. غفار - difficult because of Shadda, let's look for common ones)
-    else if (len === 4 && cleanWord[2] === 'ا') {
-      root = cleanWord[0] + cleanWord[1] + cleanWord[3];
-      weight = "فَعّال / فَعال";
-      explanation = `زيدت الألف قبل الحرف الأخير.`;
-    }
     // Fallback or more complex
     else {
       setError("تعذر تحديد الوزن بدقة، حاول بكلمة أخرى (مثل: كاتب، محمود، انكسر، أو كلمات ثلاثية).");
@@ -82,214 +80,195 @@ export const MorphologyModal: React.FC<MorphologyModalProps> = ({ isOpen, onClos
     setResult({ word: cleanWord, root, weight, explanation });
   };
 
-  const menuOptions = [
-    {
-      id: 'explanation',
-      title: 'الميزان الصرفي',
-      desc: 'تعرف على أساسيات وزن الكلمات وكيفية مقابلة الحروف بـ (ف-ع-ل).',
-      icon: <Info className="text-blue-500" size={32} />,
-      color: 'bg-blue-50'
-    },
-    {
-      id: 'analyzer',
-      title: 'اكتب الكلمة واحصل على الوزن',
-      desc: 'أدخل أي كلمة وسنقوم بتحليلها صرفياً واستخراج وزنها وجذرها.',
-      icon: <Search className="text-purple-500" size={32} />,
-      color: 'bg-purple-50'
-    }
-  ];
-
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden text-right relative"
-      >
-        {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50">
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-gray-200 rounded-full transition-colors order-first"
-          >
-            <X size={24} className="text-gray-500" />
-          </button>
-          
-          <div className="flex items-center gap-3">
-            <h2 className="text-xl font-black text-gray-900">
-              {view === 'selection' ? 'مسار تعلم الصرف' : 
-               view === 'explanation' ? 'شرح الميزان الصرفي' : 'محلل الأوزان الصرفية'}
-            </h2>
-            <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-              <Scale size={20} />
+    <>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="bg-white w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden text-right relative flex flex-col max-h-[90vh]"
+        >
+          {/* Header */}
+          <div className="p-8 border-b border-gray-100 flex items-center justify-between bg-white relative z-10">
+            <button 
+              onClick={onClose}
+              className="p-3 hover:bg-slate-100 rounded-full transition-colors order-first"
+            >
+              <X size={24} className="text-slate-500" />
+            </button>
+            
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <h2 className="text-2xl font-black text-slate-900">وحدة الصرف التفاعلية</h2>
+                <p className="text-slate-400 font-bold">تعلم، طبق، وقيم مستواك وفق المنهج الرسمي</p>
+              </div>
+              <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-100">
+                <ScaleIcon size={28} />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="p-8">
-          <AnimatePresence mode="wait">
-            {view === 'selection' && (
-              <motion.div 
-                key="selection"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="grid gap-6"
-              >
-                {menuOptions.map((opt) => (
-                  <button
-                    key={opt.id}
-                    onClick={() => setView(opt.id as any)}
-                    className="flex items-center gap-6 p-6 rounded-3xl border-2 border-transparent hover:border-purple-200 hover:bg-purple-50/50 transition-all text-right group"
-                  >
-                    <div className={cn("w-20 h-20 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-110", opt.color)}>
-                      {opt.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-black text-gray-900 mb-2">{opt.title}</h3>
-                      <p className="text-gray-500 font-bold leading-relaxed">{opt.desc}</p>
-                    </div>
-                    <ChevronRight size={24} className="text-gray-300 group-hover:text-purple-500 transition-colors" />
-                  </button>
-                ))}
-              </motion.div>
-            )}
-
-            {view === 'explanation' && (
-              <motion.div 
-                key="explanation"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="space-y-8"
-              >
-                <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100">
-                  <p className="text-blue-900 font-bold leading-loose text-lg text-center">
-                    الميزان الصرفي هو مقياس وضعه علماء العرب لمعرفة أحوال الكلمات، واختاروا كلمة <span className="text-blue-600 underline">(فَعَلَ)</span> لتكرارها في كل فعل.
-                  </p>
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    { word: 'دَرَسَ', weight: 'فَعَلَ', color: 'bg-emerald-50 text-emerald-700' },
-                    { word: 'كاتِب', weight: 'فاعِل', color: 'bg-amber-50 text-amber-700' },
-                    { word: 'مَفْهوم', weight: 'مَفْعول', color: 'bg-rose-50 text-rose-700' }
-                  ].map((item, idx) => (
-                    <div key={idx} className={cn("p-6 rounded-[2rem] text-center border border-transparent hover:shadow-md transition-all", item.color)}>
-                      <div className="text-3xl font-black mb-2">{item.word}</div>
-                      <div className="w-8 h-px bg-current opacity-20 mx-auto mb-2" />
-                      <div className="text-xl font-bold opacity-80">{item.weight}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="space-y-4">
-                  <h4 className="font-black text-gray-900 flex items-center gap-2">
-                    <Sparkles size={18} className="text-amber-500" />
-                    كيف نوازن الكلمات؟
-                  </h4>
-                  <ul className="space-y-3 mr-4">
-                    <li className="flex items-start gap-2 text-gray-600 font-bold">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
-                      <span>الحروف المشتقة تقابل حروف الميزان: الفاء تقابل الحرف الأول، العين تقابل الثاني، واللام تقابل الثالث.</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-gray-600 font-bold">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
-                      <span>إذا زيد حرف في الكلمة، نزيد مقابله في الميزان؛ فكلمة (استخرج) على وزن (استفعل).</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <button 
-                  onClick={() => setView('selection')}
-                  className="w-full py-4 rounded-2xl bg-gray-100 text-gray-600 font-black hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+          <div className="flex-1 overflow-y-auto p-8 bg-slate-50/30">
+            <AnimatePresence mode="wait">
+              {view === 'selection' && (
+                <motion.div 
+                  key="selection"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="space-y-10"
                 >
-                  <ArrowLeft size={18} />
-                  العودة للخيارات
-                </button>
-              </motion.div>
-            )}
-
-            {view === 'analyzer' && (
-              <motion.div 
-                key="analyzer"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="space-y-6"
-              >
-                <div className="relative">
-                  <input 
-                    type="text" 
-                    value={word}
-                    onChange={(e) => setWord(e.target.value)}
-                    placeholder="اكتب كلمة عربية هنا..."
-                    className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-gray-100 focus:border-purple-500 outline-none font-black text-xl text-center"
-                    onKeyPress={(e) => e.key === 'Enter' && analyzeWord(word)}
-                  />
-                  <button 
-                    onClick={() => analyzeWord(word)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-purple-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-purple-200 hover:bg-purple-700 transition-all"
-                  >
-                    تحليل
-                  </button>
-                </div>
-
-                {error && (
-                  <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-2 text-red-600 font-bold">
-                    <AlertCircle size={20} />
-                    <span>{error}</span>
-                  </div>
-                )}
-
-                <AnimatePresence>
-                  {result && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="space-y-6"
-                    >
-                      <div className="grid grid-cols-3 gap-4">
-                        {[
-                          { label: 'الكلمة', value: result.word, color: 'text-gray-900 bg-gray-50' },
-                          { label: 'الجذر', value: result.root, color: 'text-emerald-600 bg-emerald-50' },
-                          { label: 'الوزن', value: result.weight, color: 'text-purple-600 bg-purple-50' }
-                        ].map((item, idx) => (
-                          <div key={idx} className={cn("p-4 rounded-2xl text-center border border-gray-100", item.color)}>
-                            <div className="text-[10px] uppercase font-black opacity-50 mb-1">{item.label}</div>
-                            <div className="text-2xl font-black">{item.value}</div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="p-6 bg-purple-600 rounded-3xl text-white">
-                        <div className="flex items-center gap-2 mb-3">
-                          <CheckCircle2 size={20} />
-                          <h4 className="font-black">شرح التحليل</h4>
+                  {/* Tools Header */}
+                  <div className="flex flex-col md:flex-row gap-6">
+                     <button 
+                        onClick={() => setView('analyzer')}
+                        className="flex-1 p-8 bg-white border border-indigo-100 rounded-[2.5rem] shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all group flex items-center gap-6"
+                     >
+                        <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                           <Search size={32} />
                         </div>
-                        <p className="font-bold leading-[1.8] opacity-90">
-                          {result.explanation}
-                        </p>
-                      </div>
+                        <div className="text-right">
+                           <h3 className="text-xl font-black text-slate-900 mb-1">محلل الميزان الصرفي</h3>
+                           <p className="text-slate-400 font-bold text-sm">اكتب أي كلمة واحصل على وزنها فوراً</p>
+                        </div>
+                        <ChevronLeft className="mr-auto text-slate-300 group-hover:text-indigo-600" />
+                     </button>
+                  </div>
+
+                  {/* Lessons Grid */}
+                  <div className="space-y-6">
+                     <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
+                        <Star className="text-amber-400 fill-amber-400" size={20} />
+                        الدروس التفاعلية المقررة
+                     </h3>
+                     <div className="grid md:grid-cols-2 gap-6">
+                        {morphologyLessons.map((lesson) => (
+                           <button
+                              key={lesson.id}
+                              onClick={() => setSelectedLesson(lesson)}
+                              className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all text-right group flex items-center gap-6"
+                           >
+                              <div className="w-16 h-16 bg-slate-50 text-indigo-500 rounded-2xl flex items-center justify-center shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                 <Brain size={28} />
+                              </div>
+                              <div className="flex-1">
+                                 <div className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-1">{lesson.level}</div>
+                                 <h4 className="text-xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{lesson.title}</h4>
+                                 <p className="text-slate-400 font-bold text-sm mt-1">تتضمن: شرح، أمثلة، ومسابقات</p>
+                              </div>
+                              <div className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-300 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-all">
+                                 <PlayCircle size={20} />
+                              </div>
+                           </button>
+                        ))}
+                     </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {view === 'analyzer' && (
+                <motion.div 
+                  key="analyzer"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="space-y-8 max-w-2xl mx-auto"
+                >
+                  <div className="text-center space-y-4 mb-10">
+                     <div className="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-3xl flex items-center justify-center mx-auto">
+                        <Search size={40} />
+                     </div>
+                     <h2 className="text-3xl font-black text-slate-900">المحلل الصرفي الذكي</h2>
+                     <p className="text-slate-400 font-bold">أداة مساعدة لوزن الكلمات وفهم جذورها</p>
+                  </div>
+
+                  <div className="relative">
+                    <input 
+                      type="text" 
+                      value={word}
+                      onChange={(e) => setWord(e.target.value)}
+                      placeholder="اكتب كلمة عربية هنا..."
+                      className="w-full p-8 rounded-[2rem] bg-white border-2 border-slate-100 focus:border-indigo-500 outline-none font-black text-2xl text-center shadow-lg shadow-slate-100"
+                      onKeyPress={(e) => e.key === 'Enter' && analyzeWord(word)}
+                    />
+                    <button 
+                      onClick={() => analyzeWord(word)}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all"
+                    >
+                      تحليل
+                    </button>
+                  </div>
+
+                  {error && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 font-bold">
+                      <AlertCircle size={20} />
+                      <span>{error}</span>
                     </motion.div>
                   )}
-                </AnimatePresence>
 
-                <button 
-                  onClick={() => setView('selection')}
-                  className="w-full py-4 rounded-2xl border-2 border-gray-100 text-gray-500 font-bold hover:bg-gray-50 transition-all"
-                >
-                  تغيير المسار
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.div>
-    </div>
+                  <AnimatePresence>
+                    {result && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-8"
+                      >
+                        <div className="grid grid-cols-3 gap-6">
+                          {[
+                            { label: 'الكلمة', value: result.word, color: 'text-slate-900 bg-white' },
+                            { label: 'الجذر', value: result.root, color: 'text-emerald-600 bg-emerald-50' },
+                            { label: 'الوزن', value: result.weight, color: 'text-indigo-600 bg-indigo-50' }
+                          ].map((item, idx) => (
+                            <div key={idx} className={cn("p-6 rounded-[2rem] text-center border border-slate-100 shadow-sm", item.color)}>
+                              <div className="text-[10px] uppercase font-black opacity-50 mb-2 tracking-widest">{item.label}</div>
+                              <div className="text-3xl font-black">{item.value}</div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="p-8 bg-indigo-600 rounded-[3rem] text-white shadow-2xl shadow-indigo-100 relative overflow-hidden">
+                           <div className="absolute top-0 left-0 p-8 text-white/10 -ml-10 -mt-10">
+                              <Sparkles size={160} />
+                           </div>
+                           <div className="relative z-10">
+                             <div className="flex items-center gap-3 mb-4">
+                               <CheckCircle2 size={24} className="text-indigo-200" />
+                               <h4 className="text-xl font-black">شرح التحليل التربوي</h4>
+                             </div>
+                             <p className="text-lg font-bold leading-relaxed opacity-90">
+                               {result.explanation}
+                             </p>
+                           </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <button 
+                    onClick={() => { setView('selection'); setResult(null); setWord(''); }}
+                    className="w-full py-5 rounded-[2rem] bg-slate-100 text-slate-500 font-black hover:bg-slate-200 transition-all flex items-center justify-center gap-3"
+                  >
+                    <ArrowLeft size={20} />
+                    <span>العودة لقائمة الدروس</span>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      </div>
+
+      <AnimatePresence>
+         {selectedLesson && (
+            <MorphologyInteractiveUnit 
+               lesson={selectedLesson}
+               onClose={() => setSelectedLesson(null)}
+            />
+         )}
+      </AnimatePresence>
+    </>
   );
 };
 
-import { ChevronRight } from 'lucide-react';
