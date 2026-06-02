@@ -65,17 +65,25 @@ export const DataSeeder: React.FC = () => {
       const batch = writeBatch(db);
 
       // Seed Students
-      for (const student of studentsData) {
+      studentsData.forEach((student, idx) => {
         const studentRef = doc(db, 'users', student.code); // Using code as ID for easy seeding
+        const num = idx + 1;
+        let gradeLevel = 'الأولى إعدادي';
+        if (num >= 11 && num <= 20) {
+          gradeLevel = 'الثانية إعدادي';
+        } else if (num >= 21) {
+          gradeLevel = 'الثالثة إعدادي';
+        }
+
         batch.set(studentRef, {
           displayName: student.name,
           email: student.email,
           orderNumber: student.code,
-          gradeLevel: 'الثالثة إعدادي',
+          gradeLevel,
           role: 'student',
           createdAt: serverTimestamp(),
         }, { merge: true });
-      }
+      });
 
       // Seed Exams
       for (const exam of examsData) {

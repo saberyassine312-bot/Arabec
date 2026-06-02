@@ -705,6 +705,79 @@ export const TeacherDashboard: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* LTI 1.3 Advantage Integration Console */}
+            <div className="mt-8 p-8 bg-slate-900 text-slate-100 rounded-[2.5rem] border border-slate-800 shadow-xl space-y-6">
+              <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
+                <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center text-white">
+                  <Database size={20} />
+                </div>
+                <div>
+                  <h3 className="font-black text-xl">لوحة ربط وإعدادات LTI 1.3 Advantage مع Kahoot!</h3>
+                  <p className="text-xs text-slate-400">إعدادات المصادقة وربط الدرجات (Grade Passback) بموجب معايير IMS Global الرسمية</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="text-sm font-bold text-purple-400">🌐 1. إعدادات الأداة الخارجية (Kahoot! Tool Configurations)</h4>
+                  <div className="space-y-3 text-xs text-right" dir="rtl">
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                      <span className="text-slate-500 block mb-1 text-[10px]">Tool URL (رابط المسابقة)</span>
+                      <code className="text-purple-300 font-mono select-all break-all">https://lti.kahoot.com</code>
+                    </div>
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                      <span className="text-slate-500 block mb-1 text-[10px]">JWKS URL (التحقق من المفاتيح)</span>
+                      <code className="text-purple-300 font-mono select-all break-all">https://lti.kahoot.com/.well-known/jwks.json</code>
+                    </div>
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                      <span className="text-slate-500 block mb-1 text-[10px]">Login Initiation URL (رابط المصادقة)</span>
+                      <code className="text-purple-300 font-mono select-all break-all">https://lti.kahoot.com/api/login/init</code>
+                    </div>
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                      <span className="text-slate-500 block mb-1 text-[10px]">Redirect URI (التوجيه والمصادقة)</span>
+                      <code className="text-purple-300 font-mono select-all break-all">https://lti.kahoot.com/api/message</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-sm font-bold text-emerald-400">🏫 2. معلومات منصتنا التعليمية (LMS Platform Specifications)</h4>
+                  <div className="space-y-3 text-xs text-right" dir="rtl">
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                      <span className="text-slate-500 block mb-1 text-[10px]">Platform Issuer ID (مُعرف ناشر المنصة)</span>
+                      <code className="text-emerald-300 font-mono select-all break-all">{window.location.origin}</code>
+                    </div>
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                      <span className="text-slate-500 block mb-1 text-[10px]">OIDC Authorization endpoint (طلب الترخيص)</span>
+                      <code className="text-emerald-300 font-mono select-all break-all">{window.location.origin}/api/lti/auth</code>
+                    </div>
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                      <span className="text-slate-500 block mb-1 text-[10px]">Public Keys Keyset JWKS (رابط التحقق)</span>
+                      <code className="text-emerald-300 font-mono select-all break-all">{window.location.origin}/api/lti/jwks</code>
+                    </div>
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                      <span className="text-slate-500 block mb-1 text-[10px]">OAuth2 Access Token URL (منح التراخيص)</span>
+                      <code className="text-emerald-300 font-mono select-all break-all">{window.location.origin}/api/lti/token</code>
+                    </div>
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                      <span className="text-slate-500 block mb-1 text-[10px]">LTI Advantage Client ID (رمز العميل المعتمد)</span>
+                      <code className="text-slate-300 font-mono select-all">kahoot_lms_advantage_client</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-950 p-5 rounded-3xl border border-slate-800 mt-4 text-xs space-y-4 leading-relaxed text-right" dir="rtl">
+                <span className="font-bold text-purple-400 block text-sm">📚 خطوات تثبيت وإعداد بروتوكول LTI 1.3 في منصات Moodle/Canvas أو المنصة المخصصة:</span>
+                <ol className="list-decimal pr-4 space-y-2 text-slate-400">
+                  <li>الذهاب إلى لوحة تحكم الإدارة في LMS واختيار <strong className="text-slate-200">الأدوات الخارجية (External Tools LTI)</strong>.</li>
+                  <li>اختيار إضافة أداة LTI 1.3 Advantage وتعبئة معلومات العميل ومحددات الـ Client ID ومفاتيح التوقيع الرقمي.</li>
+                  <li>نسخ عناوين المنصة الافتراضية المبينة أعلاه وربطها مع Kahoot LTI Dashboard تحت الخيارات المقابلة.</li>
+                  <li>سيقوم بروتوكول LTI Advantage بالمصادقة الخلفية باستخدام تبادل مفاتيح التشفير ومزامنة درجات العلامات تلقائيًا عبر <strong className="text-slate-200">Assignment and Grading Service (AGS)</strong> وحفظ تقارير المتعلمين بمستودع النتائج فورًا في نظام التقييم.</li>
+                </ol>
+              </div>
+            </div>
           </div>
         </div>
       )}

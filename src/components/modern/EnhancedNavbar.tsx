@@ -9,6 +9,7 @@ import { cn } from '../../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
+import { MadrasaNetLogo } from './MadrasaNetLogo';
 
 interface EnhancedNavbarProps {
   user: any;
@@ -48,6 +49,20 @@ export const EnhancedNavbar: React.FC<EnhancedNavbarProps> = ({
             className="bg-transparent border-none outline-none w-full text-sm font-bold text-gray-700 placeholder:text-gray-400 text-right"
           />
         </div>
+      </div>
+
+      {/* 🌟 Center Branding: MadrasaNet Logo Integration */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center justify-center pointer-events-auto z-10 transition-all">
+        <Link to="/" className="flex items-center">
+          <MadrasaNetLogo size="md" showTagline={true} />
+        </Link>
+      </div>
+
+      {/* 📱 Mobile Branding (Slightly smaller, fits all smaller devices) */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex md:hidden items-center justify-center pointer-events-auto z-10 transition-all">
+        <Link to="/" className="flex items-center">
+          <MadrasaNetLogo size="sm" showTagline={false} />
+        </Link>
       </div>
 
       {/* Right items: Stats and Profile */}

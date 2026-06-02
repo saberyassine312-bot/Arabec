@@ -5,7 +5,7 @@ import { HorizontalNav } from './HorizontalNav';
 import { MobileBottomNav } from './MobileBottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
+import { db, auth } from '../../lib/firebase';
 import { cn } from '../../lib/utils';
 
 interface DashboardLayoutProps {
@@ -40,7 +40,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, user
           }
         },
         (error) => {
-          handleFirestoreError(error, OperationType.GET, `users/${user.uid}`);
+          if (auth.currentUser) {
+            handleFirestoreError(error, OperationType.GET, `users/${user.uid}`);
+          }
         }
       );
       return () => unsub();
@@ -132,8 +134,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, user
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         <main className={cn(
-          "flex-1 overflow-y-auto custom-scrollbar pb-24 lg:pb-12 h-screen transition-all duration-500",
-          isNavHidden ? "px-4 py-20 lg:px-20 lg:py-24" : "px-4 py-8 lg:px-10 lg:py-12"
+          "flex-1 overflow-y-auto custom-scrollbar pb-24 lg:pb-12 transition-all duration-500",
+          isNavHidden 
+            ? "px-4 py-20 lg:px-20 lg:py-24 h-screen" 
+            : "px-4 py-8 lg:px-10 lg:py-12 h-[calc(100vh-5rem)] lg:h-[calc(100vh-8.5rem)]"
         )}>
            <div className={cn(
              "mx-auto space-y-12 transition-all duration-500",

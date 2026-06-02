@@ -5,12 +5,14 @@ import {
   Layers, Users, Activity, Settings, 
   LogOut, LayoutDashboard, Database,
   Brain, Type, PenTool, BookMarked,
-  X, ChevronRight, Video, BookCheck
+  X, ChevronRight, Video, BookCheck, GraduationCap,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { motion } from 'framer-motion';
 import { db } from '../../lib/firebase';
 import { collection, query, where, onSnapshot, limit } from 'firebase/firestore';
+import { MadrasaNetLogo } from './MadrasaNetLogo';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -59,28 +61,30 @@ export const EnhancedSidebar: React.FC<SidebarProps> = ({ onClose, onNavigate, u
     {
       label: 'الرئيسية',
       items: [
-        { icon: <Home size={20} />, label: 'الرئيسية', path: '/' },
-        { icon: <LayoutDashboard size={20} />, label: 'لوحتي التعليمية', path: '/student-dashboard' },
+        { icon: <Home size={24} />, label: 'الرئيسية', path: '/' },
+        { icon: <LayoutDashboard size={24} />, label: 'لوحتي التعليمية', path: '/student-dashboard' },
+        { icon: <GraduationCap size={24} />, label: 'بوابة المدرسة الذكية', path: '/school-lms' },
       ]
     },
     {
       label: 'التعلم والتفاعل',
       items: [
-        { icon: <BookOpen size={20} />, label: 'المسارات الدراسية', path: '/levels' },
-        { icon: <Video size={20} />, label: 'التواصل عن بعد', path: '/remote-communication' },
-        { icon: <Gamepad2 size={20} />, label: 'ساحة الألعاب', path: '/game-arena' },
-        { icon: <Sword size={20} />, label: 'مغامرة الإعراب', path: '/parsing-adventure' },
-        { icon: <BookCheck size={20} />, label: 'التمارين التفاعلية', path: '/exercises' },
-        { icon: <Layers size={20} />, label: 'السبورة الإلكترونية', path: '/whiteboard' },
+        { icon: <BookOpen size={24} />, label: 'المسارات الدراسية', path: '/levels' },
+        { icon: <Video size={24} />, label: 'التواصل عن بعد', path: '/remote-communication' },
+        { icon: <MessageSquare size={24} />, label: 'منتديات ومجموعات النقاش', path: '/forums' },
+        { icon: <Gamepad2 size={24} />, label: 'ساحة الألعاب', path: '/game-arena' },
+        { icon: <Sword size={24} />, label: 'مغامرة الإعراب', path: '/parsing-adventure' },
+        { icon: <BookCheck size={24} />, label: 'التمارين التفاعلية', path: '/exercises' },
+        { icon: <Layers size={24} />, label: 'السبورة الإلكترونية', path: '/whiteboard' },
       ]
     },
     {
       label: 'مكونات اللغة',
       items: [
-        { icon: <BookMarked size={20} />, label: 'قواعد النحو', path: '/courses?category=grammar' },
-        { icon: <Brain size={20} />, label: 'علم الصرف', path: '/courses?category=morphology' },
-        { icon: <PenTool size={20} />, label: 'مهارات الإملاء', path: '/courses?category=spelling' },
-        { icon: <Type size={20} />, label: 'الإنشاء والتعبير', path: '/composition' },
+        { icon: <BookMarked size={24} />, label: 'قواعد النحو', path: '/courses?category=grammar' },
+        { icon: <Brain size={24} />, label: 'علم الصرف', path: '/courses?category=morphology' },
+        { icon: <PenTool size={24} />, label: 'مهارات الإملاء', path: '/courses?category=spelling' },
+        { icon: <Type size={24} />, label: 'الإنشاء والتعبير', path: '/composition' },
       ]
     }
   ];
@@ -89,12 +93,12 @@ export const EnhancedSidebar: React.FC<SidebarProps> = ({ onClose, onNavigate, u
     menuGroups.push({
       label: 'إدارة المنصة (SaaS)',
       items: [
-        { icon: <Activity size={20} />, label: 'الإحصائيات العامة', path: '/admin/stats' },
-        { icon: <BookOpen size={20} />, label: 'إدارة الدروس', path: '/admin/lessons' },
-        { icon: <Users size={20} />, label: 'إدارة الأساتذة', path: '/admin/teachers' },
-        { icon: <Users size={20} />, label: 'قائمة المتعلمين', path: '/admin/students' },
-        { icon: <Activity size={20} />, label: 'اختيارات المتعلمين', path: '/admin/insights' },
-        { icon: <Database size={20} />, label: 'إدارة البيانات', path: '/seed-data' },
+        { icon: <Activity size={24} />, label: 'الإحصائيات العامة', path: '/admin/stats' },
+        { icon: <BookOpen size={24} />, label: 'إدارة الدروس', path: '/admin/lessons' },
+        { icon: <Users size={24} />, label: 'إدارة الأساتذة', path: '/admin/teachers' },
+        { icon: <Users size={24} />, label: 'قائمة المتعلمين', path: '/admin/students' },
+        { icon: <Activity size={24} />, label: 'اختيارات المتعلمين', path: '/admin/insights' },
+        { icon: <Database size={24} />, label: 'إدارة البيانات', path: '/seed-data' },
       ]
     });
   }
@@ -103,11 +107,7 @@ export const EnhancedSidebar: React.FC<SidebarProps> = ({ onClose, onNavigate, u
     <div className="h-full bg-white border-l border-gray-100 flex flex-col w-72 lg:w-80 rtl select-none overflow-hidden">
       <div className="p-8 border-b border-gray-50 flex items-center justify-between shrink-0">
         <Link to="/" className="flex items-center gap-4 transition-transform hover:scale-105">
-          <div className="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-emerald-200">ل</div>
-          <div className="flex flex-col text-right">
-            <span className="text-2xl font-black text-gray-900 leading-none">لغتي</span>
-            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-[0.2em] mt-1">المنصة الذكية</span>
-          </div>
+          <MadrasaNetLogo size="md" showTagline={false} />
         </Link>
         {onClose && (
           <button onClick={onClose} className="p-2 hover:bg-gray-50 rounded-xl text-gray-400 lg:hidden">
@@ -143,7 +143,7 @@ export const EnhancedSidebar: React.FC<SidebarProps> = ({ onClose, onNavigate, u
                   >
                     <div className="flex items-center gap-4">
                       <div className={cn(
-                        "transition-transform duration-300 group-hover:scale-110",
+                        "sidebar-icon transition-all duration-300 group-hover:scale-110",
                         isActive ? "text-white" : isMeet && activeSession ? "text-red-500 animate-pulse" : "text-gray-400 group-hover:text-emerald-500"
                       )}>
                         {item.icon}

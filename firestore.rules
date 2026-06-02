@@ -121,6 +121,11 @@ service cloud.firestore {
              data.classLevel is string && data.classLevel.size() < 100;
     }
 
+    function isValidLiveSession(data) {
+      return data.keys().hasAll(['title', 'teacherId', 'status']) &&
+             data.title is string && data.teacherId is string && data.status is string;
+    }
+
     // ===============================================================
     // Rules
     // ===============================================================
@@ -131,7 +136,7 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == 'student';
+      allow create: if (isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == 'student') || isAdmin();
       allow update: if (isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == resource.data.role) || isAdmin();
     }
 
@@ -144,7 +149,7 @@ service cloud.firestore {
 
     match /courses/{courseId} {
       allow read: if true;
-      allow create: if isTeacher() && isValidCourse(request.resource.data);
+      allow create: if (isTeacher() && isValidCourse(request.resource.data)) || isAdmin();
       allow update: if (isTeacher() && resource.data.teacherId == request.auth.uid && isValidCourse(request.resource.data)) || isAdmin();
       allow delete: if (isTeacher() && resource.data.teacherId == request.auth.uid) || isAdmin();
 
@@ -193,6 +198,22 @@ service cloud.firestore {
     match /grammarPaths/{userId} {
       allow read: if isOwner(userId) || isAdmin();
       allow write: if isOwner(userId) || isAdmin();
+    }
+
+    match /exams/{examId} {
+      allow read: if isAuthenticated();
+      allow write: if isTeacher() || isAdmin();
+    }
+
+    match /examResults/{resultId} {
+      allow read: if isAuthenticated();
+      allow write: if isTeacher() || isAdmin();
+    }
+
+    match /teacherMessages/{messageId} {
+      allow read: if isTeacher() || isAdmin() || (isAuthenticated() && resource.data.studentId == request.auth.uid);
+      allow create: if isTeacher() || isAdmin() || (isAuthenticated() && request.resource.data.studentId == request.auth.uid);
+      allow update, delete: if isTeacher() || isAdmin();
     }
 
   }

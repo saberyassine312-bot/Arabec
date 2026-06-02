@@ -21,3 +21,25 @@
 .markdown-body p { @apply mb-4; }
 .markdown-body ul { @apply list-disc list-inside mb-4; }
 
+/* Focus Mode: Sidebar Icon custom interactive classes */
+.sidebar-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-icon svg {
+  width: 24px !important;
+  height: 24px !important;
+  transition: all 0.3s ease;
+}
+
+/* Add drop shadow effect on hover to enhance interactivity */
+.group:hover .sidebar-icon svg {
+  filter: drop-shadow(0 4px 6px rgba(16, 185, 129, 0.45));
+}
+
+

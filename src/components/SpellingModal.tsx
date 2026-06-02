@@ -8,9 +8,6 @@ import {
   RefreshCw, Send, Quote
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { GoogleGenAI, Type } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 interface SpellingModalProps {
   isOpen: boolean;
@@ -85,49 +82,21 @@ export const SpellingModal: React.FC<SpellingModalProps> = ({ isOpen, onClose })
     setResult(null);
 
     try {
-      const prompt = `أنت "محقق الإملاء الذكي". حلل النص التالي واكتشف الأخطاء الإملائية.
-      النص: "${text}"
-      
-      المهمة:
-      1. اكتشف كل خطأ إملائي (همزات، تاءات، ألف لينة، تنوين، حروف متشابهة).
-      2. قدم النص المصحح بالكامل.
-      3. لكل خطأ، حدد نوعه واشرح القاعدة بأسلوب تعليمي مشوق لتلاميذ الإعدادي.
-      4. حدد نقاط XP مستحقة (بين 10 و 100 حسب عدد الأخطاء المكتشفة).
-      5. قدم نصيحة أخيرة للمتعلم لتجنب هذه الأخطاء مستقبلاً.`;
-
-      const res = await ai.models.generateContent({
-        model: "gemini-1.5-flash",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              correctedText: { type: Type.STRING },
-              corrections: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    original: { type: Type.STRING },
-                    corrected: { type: Type.STRING },
-                    type: { type: Type.STRING, enum: ['hemza', 'ta', 'alif', 'tanwin', 'letters', 'other'] },
-                    explanation: { type: Type.STRING },
-                    rule: { type: Type.STRING }
-                  },
-                  required: ['original', 'corrected', 'type', 'explanation', 'rule']
-                }
-              },
-              xpGained: { type: Type.NUMBER },
-              badge: { type: Type.STRING },
-              advice: { type: Type.STRING }
-            },
-            required: ['correctedText', 'corrections', 'xpGained', 'advice']
-          }
-        }
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/spelling/inspect', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({ text })
       });
-      
-      const analysis = JSON.parse(res.text || "{}");
+
+      if (!response.ok) {
+        throw new Error('Failed to inspect spelling');
+      }
+
+      const analysis = await response.json();
       
       setResult(analysis);
       const newXp = userXp + (analysis.xpGained || 20);

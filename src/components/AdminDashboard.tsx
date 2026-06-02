@@ -228,7 +228,7 @@ export const AdminDashboard: React.FC = () => {
               {activeSection === 'gamification' && "نظام التحفيز والألعاب"}
               {activeSection === 'live' && "المقابلات المباشرة"}
             </h1>
-            <p className="text-gray-500 mt-1">مرحباً بك في مركز التحكم بـ منصة لغتي</p>
+            <p className="text-gray-500 mt-1">مرحباً بك في مركز التحكم بـ منصة MadrasaNet</p>
           </div>
 
           <div className="flex items-center gap-4">

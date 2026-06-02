@@ -16,6 +16,7 @@ import {
   doc, getDoc, setDoc, collection, query, where, getDocs 
 } from 'firebase/firestore';
 import { cn } from '../lib/utils';
+import { MadrasaNetLogo } from './modern/MadrasaNetLogo';
 
 interface LoginPageProps {
   onLoginSuccess: () => void;
@@ -129,8 +130,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       >
         <div className="p-8 md:p-12">
           <div className="text-center mb-10">
-            <div className="w-20 h-20 bg-emerald-600 rounded-3xl mx-auto flex items-center justify-center text-white text-4xl font-black mb-6 shadow-xl shadow-emerald-200">
-              ل
+            <div className="flex justify-center mb-8">
+              <MadrasaNetLogo size="lg" showTagline={true} />
             </div>
             <h1 className="text-3xl font-black text-gray-900 mb-2">تسجيل دخول التلميذ</h1>
             <p className="text-gray-500 font-bold">قسم الثالثة إعدادي</p>

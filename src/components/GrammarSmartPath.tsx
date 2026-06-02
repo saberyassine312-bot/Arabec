@@ -13,7 +13,6 @@ import {
   collection, doc, getDoc, setDoc, 
   updateDoc, arrayUnion, onSnapshot 
 } from 'firebase/firestore';
-import { GoogleGenAI } from '@google/genai';
 import { QuizComponent } from './QuizComponent';
 import { handleFirestoreError, OperationType } from '../lib/firestoreUtils';
 import { ClipboardCheck } from 'lucide-react';
@@ -65,8 +64,7 @@ export default function GrammarSmartPath() {
   const [aiResponse, setAiResponse] = useState<string>('');
   const [aiLoading, setAiLoading] = useState(false);
 
-  // AI Setup
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  // AI Setup (handled via backend API proxy)
   
   useEffect(() => {
     if (!auth.currentUser) return;
@@ -122,17 +120,25 @@ export default function GrammarSmartPath() {
     setAiLoading(true);
     setAiResponse('');
     try {
-      const fullPrompt = `أنت خبير في تعليم النحو العربي للسلك الإعدادي المغربي. 
-      الموضوع الحالي: ${selectedLesson?.title}.
-      التلميذ يسأل: ${prompt}.
-      اشرح بأسلوب مبسط، استخدم أمثلة من البيئة المغربية، وكن مشجعاً جداً. 
-      اجعل الرد بصيغة Markdown.`;
-      
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: fullPrompt
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/smartpath/ask-tutor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({
+          title: selectedLesson?.title,
+          prompt
+        })
       });
-      setAiResponse(response.text || "عذراً، لم أستطع توليد رد حالياً.");
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch tutor response');
+      }
+
+      const data = await response.json();
+      setAiResponse(data.text || "عذراً، لم أستطع توليد رد حالياً.");
     } catch (error) {
       console.error("AI Error:", error);
       setAiResponse("عذراً، حدث خطأ في التواصل مع المعلم الذكي. حاول مجدداً.");

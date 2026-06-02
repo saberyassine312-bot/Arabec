@@ -20,6 +20,8 @@ import {
   Star
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { ArabicCompositionDashboard } from './ArabicCompositionDashboard';
+import { firstYearCompositionLessons } from '../data/compositionData';
 
 // Types
 interface LessonStep {
@@ -271,8 +273,8 @@ const ArabicLMSFirstYear: React.FC = () => {
   const [searchParams] = useSearchParams();
   const initialComponent = searchParams.get('component');
   
-  const [view, setView] = useState<'main' | 'grammar-list' | 'lesson'>(
-    initialComponent === 'grammar' ? 'grammar-list' : 'main'
+  const [view, setView] = useState<'main' | 'grammar-list' | 'lesson' | 'composition-list'>(
+    initialComponent === 'grammar' ? 'grammar-list' : initialComponent === 'composition' ? 'composition-list' : 'main'
   );
   const [activeComponent, setActiveComponent] = useState<string | null>(initialComponent);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
@@ -293,13 +295,15 @@ const ArabicLMSFirstYear: React.FC = () => {
 
   const goBack = () => {
     if (view === 'lesson') setView('grammar-list');
-    else if (view === 'grammar-list') setView('main');
+    else if (view === 'grammar-list' || view === 'composition-list') setView('main');
   };
 
   const handleComponentSelect = (comp: string) => {
     setActiveComponent(comp);
     if (comp === 'grammar') {
       setView('grammar-list');
+    } else if (comp === 'composition') {
+      setView('composition-list');
     }
   };
 
@@ -332,8 +336,10 @@ const ArabicLMSFirstYear: React.FC = () => {
               </button>
               {view !== 'main' && (
                 <>
-                  <ChevronLeft size={14} />
-                  <span className={view === 'grammar-list' ? 'text-emerald-600' : 'text-gray-500'}>مكون الدرس اللغوي</span>
+                  <ChevronLeft size={14} className="text-gray-300" />
+                  <span className={(view === 'grammar-list' || view === 'lesson') ? 'text-emerald-600 font-bold' : 'text-purple-600 font-bold'}>
+                    {(view === 'grammar-list' || view === 'lesson') ? 'مكون الدرس اللغوي' : 'مكون التعبير والإنشاء'}
+                  </span>
                 </>
               )}
               {view === 'lesson' && currentLesson && (
@@ -633,6 +639,21 @@ const ArabicLMSFirstYear: React.FC = () => {
                      </motion.div>
                   </AnimatePresence>
                </div>
+            </motion.div>
+          )}
+
+          {view === 'composition-list' && (
+            <motion.div
+              key="composition"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+            >
+              <ArabicCompositionDashboard 
+                lessons={firstYearCompositionLessons} 
+                gradeName="السنة الأولى إعدادي" 
+                onBack={() => setView('main')} 
+              />
             </motion.div>
           )}
         </AnimatePresence>

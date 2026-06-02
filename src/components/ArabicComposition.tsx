@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PenTool, Send, AlertCircle, Info, RefreshCw, ArrowRight, MessageSquare, Sparkles, Lightbulb, Camera, Upload, Image as ImageIcon, X, Check } from 'lucide-react';
-import { GoogleGenAI, Type } from "@google/genai";
 import { cn } from '../lib/utils';
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 interface Correction {
   original: string;
@@ -95,21 +92,23 @@ const ArabicComposition: React.FC = () => {
     setError(null);
     try {
       const base64Data = base64Image.split(',')[1];
+      const token = localStorage.getItem('token');
       
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: [
-          {
-            inlineData: {
-              mimeType: mimeType,
-              data: base64Data
-            }
-          },
-          "أنت خبير في التعرف الضوئي على الحروف (OCR) للغة العربية. استخرج النص العربي الموجود في هذه الصورة أو الملف بدقة عالية. حافظ على ترتيب الفقرات والأسطر. لا تضف أي تعليقات أو شرح، فقط النص المستخرج."
-        ]
+      const response = await fetch('/api/composition/ocr', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({ base64Image: base64Data, mimeType })
       });
 
-      const extractedText = response.text;
+      if (!response.ok) {
+        throw new Error('OCR failed');
+      }
+
+      const data = await response.json();
+      const extractedText = data.text;
       
       if (extractedText) {
         setText(extractedText.trim());
@@ -145,23 +144,22 @@ const ArabicComposition: React.FC = () => {
     setError(null);
 
     try {
-      const prompt = `أنت أداة تعليمية ذكية لتصحيح النصوص باللغة العربية.
-            المرحلة 2: عرض النص مع تظليل.
-            أعد عرض النص التالي كما هو تماماً، لكن قم بوضع الكلمات التي تحتوي على أخطاء محتملة (إملائية، نحوية، أو تركيبية) بين وسوم <error> و </error>.
-            قواعد صارمة:
-            1. لا تشرح أي شيء.
-            2. لا تضغ ملاحظات.
-            3. لا تعطي إجابة أو تصحيح.
-            4. فقط ضع الوسوم حول الكلمات الخاطئة داخل النص الأصلي.
-            
-            النص: "${text}"`;
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/composition/highlight', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({ text })
       });
-      
-      const rawText = response.text || "";
+
+      if (!response.ok) {
+        throw new Error('Highlight API failed');
+      }
+
+      const data = await response.json();
+      const rawText = data.text || "";
       setHighlightedText(rawText);
       setStage('highlight');
     } catch (err) {
@@ -178,57 +176,21 @@ const ArabicComposition: React.FC = () => {
     setError(null);
 
     try {
-      const prompt = `أنت أداة تعليمية ذكية لتصحيح النصوص باللغة العربية.
-            المرحلة 3: التصحيح النهائي والشرح.
-            قم بتصحيح النص التالي كاملاً بشكل صحيح، ثم اشرح الأخطاء التي وقع فيها المتعلم مع ذكر القاعدة النحوية أو الإملائية لكل خطأ بأسلوب مبسط.
-            
-            النص: "${text}"`;
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              correctedText: { type: Type.STRING },
-              corrections: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    original: { type: Type.STRING },
-                    corrected: { type: Type.STRING },
-                    type: { type: Type.STRING, enum: ['spelling', 'grammar', 'structure'] },
-                    explanation: { type: Type.STRING },
-                    rule: { type: Type.STRING }
-                  },
-                  required: ['original', 'corrected', 'type', 'explanation', 'rule']
-                }
-              },
-              rating: { type: Type.STRING },
-              stats: {
-                type: Type.OBJECT,
-                properties: {
-                  errorCount: { type: Type.NUMBER },
-                  spellingErrors: { type: Type.NUMBER },
-                  grammarErrors: { type: Type.NUMBER },
-                  structureErrors: { type: Type.NUMBER }
-                },
-                required: ['errorCount', 'spellingErrors', 'grammarErrors', 'structureErrors']
-              },
-              suggestions: {
-                type: Type.ARRAY,
-                items: { type: Type.STRING }
-              }
-            },
-            required: ['correctedText', 'corrections', 'rating', 'stats', 'suggestions']
-          }
-        }
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/composition/final', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({ text })
       });
 
-      const analysis = JSON.parse(response.text || "{}");
+      if (!response.ok) {
+        throw new Error('Final analysis API failed');
+      }
+
+      const analysis = await response.json();
       setResult(analysis);
       setStage('final');
     } catch (err) {

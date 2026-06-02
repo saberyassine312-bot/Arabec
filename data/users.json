@@ -1,0 +1,1202 @@
+[
+  {
+    "id": "admin_saber",
+    "name": "الأستاذ ياسين صابر",
+    "email": "saberyassine312@gmail.com",
+    "password": "$2b$10$xYgJcntVoExGi3uAlVal/uMqyJzabE9pHkdw2UcPPWbqhxGmCnkSG",
+    "class": "الإدارة",
+    "role": "admin",
+    "xp": 10000,
+    "streak": 99
+  },
+  {
+    "id": "std_1",
+    "name": "منى مطهار",
+    "email": "mona.matthar1@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الأولى إعدادي",
+    "role": "student",
+    "xp": 321,
+    "streak": 4,
+    "lastLogin": "2026-05-30T12:05:37.328Z",
+    "loginCount": 11,
+    "totalTimeSpent": 341,
+    "attendanceRate": 81,
+    "progressPercentage": 57,
+    "activityLogs": [
+      {
+        "id": "log_init_1",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.623Z",
+        "duration": 17,
+        "ipAddress": "192.168.1.11",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_1",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.623Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.11",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_2",
+    "name": "فاطمة الزهراء أعزيزي",
+    "email": "fatimazahra.aazizi2@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الأولى إعدادي",
+    "role": "student",
+    "xp": 841,
+    "streak": 1,
+    "lastLogin": "2026-05-31T20:48:17.502Z",
+    "loginCount": 8,
+    "totalTimeSpent": 181,
+    "attendanceRate": 80,
+    "progressPercentage": 40,
+    "activityLogs": [
+      {
+        "id": "log_init_2",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.623Z",
+        "duration": 28,
+        "ipAddress": "192.168.1.12",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_2",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.623Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.12",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_3",
+    "name": "جهان البكرة",
+    "email": "jihan.bakkra3@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الأولى إعدادي",
+    "role": "student",
+    "xp": 265,
+    "streak": 5,
+    "lastLogin": "2026-06-01T04:22:49.102Z",
+    "loginCount": 9,
+    "totalTimeSpent": 238,
+    "attendanceRate": 92,
+    "progressPercentage": 69,
+    "activityLogs": [
+      {
+        "id": "log_init_3",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.623Z",
+        "duration": 23,
+        "ipAddress": "192.168.1.13",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_3",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.623Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.13",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_4",
+    "name": "شيماء بالفقير",
+    "email": "chaymae.balfakir4@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الأولى إعدادي",
+    "role": "student",
+    "xp": 267,
+    "streak": 5,
+    "lastLogin": "2026-05-30T00:28:31.018Z",
+    "loginCount": 14,
+    "totalTimeSpent": 141,
+    "attendanceRate": 80,
+    "progressPercentage": 69,
+    "activityLogs": [
+      {
+        "id": "log_init_4",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.623Z",
+        "duration": 13,
+        "ipAddress": "192.168.1.14",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_4",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.623Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.14",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_5",
+    "name": "سكينة حفيان",
+    "email": "sakina.hafian5@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الأولى إعدادي",
+    "role": "student",
+    "xp": 1065,
+    "streak": 1,
+    "lastLogin": "2026-05-31T17:39:10.759Z",
+    "loginCount": 9,
+    "totalTimeSpent": 180,
+    "attendanceRate": 80,
+    "progressPercentage": 73,
+    "activityLogs": [
+      {
+        "id": "log_init_5",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.624Z",
+        "duration": 35,
+        "ipAddress": "192.168.1.15",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_5",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.624Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.15",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_6",
+    "name": "حليمة كزيز",
+    "email": "halima.kziz6@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الأولى إعدادي",
+    "role": "student",
+    "xp": 548,
+    "streak": 1,
+    "lastLogin": "2026-06-01T15:51:00.128Z",
+    "loginCount": 19,
+    "totalTimeSpent": 217,
+    "attendanceRate": 93,
+    "progressPercentage": 53,
+    "activityLogs": [
+      {
+        "id": "log_init_6",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.624Z",
+        "duration": 24,
+        "ipAddress": "192.168.1.16",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_6",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.624Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.16",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_7",
+    "name": "غزلان أفاريد",
+    "email": "ghizlane.afarid7@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الأولى إعدادي",
+    "role": "student",
+    "xp": 438,
+    "streak": 2,
+    "lastLogin": "2026-05-30T15:53:35.174Z",
+    "loginCount": 10,
+    "totalTimeSpent": 82,
+    "attendanceRate": 84,
+    "progressPercentage": 74,
+    "activityLogs": [
+      {
+        "id": "log_init_7",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.624Z",
+        "duration": 17,
+        "ipAddress": "192.168.1.17",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_7",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.624Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.17",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_8",
+    "name": "حليمة اسماعيلي",
+    "email": "halima.ismaili8@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الأولى إعدادي",
+    "role": "student",
+    "xp": 285,
+    "streak": 4,
+    "lastLogin": "2026-06-01T19:02:03.299Z",
+    "loginCount": 13,
+    "totalTimeSpent": 313,
+    "attendanceRate": 89,
+    "progressPercentage": 64,
+    "activityLogs": [
+      {
+        "id": "log_init_8",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.625Z",
+        "duration": 34,
+        "ipAddress": "192.168.1.18",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_8",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.625Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.18",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_9",
+    "name": "فاطمة الزهراء صاديق",
+    "email": "fatimazahra.sadiq9@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الأولى إعدادي",
+    "role": "student",
+    "xp": 719,
+    "streak": 3,
+    "lastLogin": "2026-06-01T18:10:08.660Z",
+    "loginCount": 12,
+    "totalTimeSpent": 115,
+    "attendanceRate": 91,
+    "progressPercentage": 45,
+    "activityLogs": [
+      {
+        "id": "log_init_9",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.625Z",
+        "duration": 11,
+        "ipAddress": "192.168.1.19",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_9",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.625Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.19",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_10",
+    "name": "نورة عريف",
+    "email": "noura.arif10@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الأولى إعدادي",
+    "role": "student",
+    "xp": 897,
+    "streak": 5,
+    "lastLogin": "2026-05-31T14:11:32.956Z",
+    "loginCount": 16,
+    "totalTimeSpent": 241,
+    "attendanceRate": 99,
+    "progressPercentage": 40,
+    "activityLogs": [
+      {
+        "id": "log_init_10",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.625Z",
+        "duration": 20,
+        "ipAddress": "192.168.1.20",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_10",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.625Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.20",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_11",
+    "name": "يوسف النكشاوي",
+    "email": "youssef.nakchawi11@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثانية إعدادي",
+    "role": "student",
+    "xp": 305,
+    "streak": 4,
+    "lastLogin": "2026-05-30T15:41:38.551Z",
+    "loginCount": 15,
+    "totalTimeSpent": 318,
+    "attendanceRate": 85,
+    "progressPercentage": 49,
+    "activityLogs": [
+      {
+        "id": "log_init_11",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.626Z",
+        "duration": 24,
+        "ipAddress": "192.168.1.21",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_11",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.626Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.21",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_12",
+    "name": "لبنى بقادير",
+    "email": "lobna.bqadir12@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثانية إعدادي",
+    "role": "student",
+    "xp": 104,
+    "streak": 4,
+    "lastLogin": "2026-06-01T15:04:53.728Z",
+    "loginCount": 13,
+    "totalTimeSpent": 256,
+    "attendanceRate": 84,
+    "progressPercentage": 76,
+    "activityLogs": [
+      {
+        "id": "log_init_12",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.626Z",
+        "duration": 13,
+        "ipAddress": "192.168.1.22",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_12",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.626Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.22",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_13",
+    "name": "يوسف فكاك",
+    "email": "youssef.fkak13@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثانية إعدادي",
+    "role": "student",
+    "xp": 770,
+    "streak": 1,
+    "lastLogin": "2026-05-30T23:31:25.474Z",
+    "loginCount": 6,
+    "totalTimeSpent": 238,
+    "attendanceRate": 99,
+    "progressPercentage": 64,
+    "activityLogs": [
+      {
+        "id": "log_init_13",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.627Z",
+        "duration": 11,
+        "ipAddress": "192.168.1.23",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_13",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.627Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.23",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_14",
+    "name": "سهام أخي",
+    "email": "siham.akhi14@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثانية إعدادي",
+    "role": "student",
+    "xp": 1027,
+    "streak": 4,
+    "lastLogin": "2026-06-01T19:31:24.057Z",
+    "loginCount": 5,
+    "totalTimeSpent": 298,
+    "attendanceRate": 92,
+    "progressPercentage": 53,
+    "activityLogs": [
+      {
+        "id": "log_init_14",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.627Z",
+        "duration": 16,
+        "ipAddress": "192.168.1.24",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_14",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.627Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.24",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_15",
+    "name": "وداد البقالي",
+    "email": "wadad.baqali15@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثانية إعدادي",
+    "role": "student",
+    "xp": 527,
+    "streak": 5,
+    "lastLogin": "2026-05-30T12:28:04.990Z",
+    "loginCount": 7,
+    "totalTimeSpent": 334,
+    "attendanceRate": 86,
+    "progressPercentage": 77,
+    "activityLogs": [
+      {
+        "id": "log_init_15",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.628Z",
+        "duration": 16,
+        "ipAddress": "192.168.1.25",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_15",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.628Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.25",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_16",
+    "name": "محمد أزراولي",
+    "email": "mohamed.azraouli16@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثانية إعدادي",
+    "role": "student",
+    "xp": 429,
+    "streak": 2,
+    "lastLogin": "2026-05-30T23:28:47.002Z",
+    "loginCount": 15,
+    "totalTimeSpent": 186,
+    "attendanceRate": 94,
+    "progressPercentage": 51,
+    "activityLogs": [
+      {
+        "id": "log_init_16",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.628Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.26",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_16",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.628Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.26",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_17",
+    "name": "فاطمة الزهراء أدميني",
+    "email": "fatimazahra.admini17@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثانية إعدادي",
+    "role": "student",
+    "xp": 622,
+    "streak": 4,
+    "lastLogin": "2026-05-31T14:27:54.595Z",
+    "loginCount": 5,
+    "totalTimeSpent": 164,
+    "attendanceRate": 89,
+    "progressPercentage": 79,
+    "activityLogs": [
+      {
+        "id": "log_init_17",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.629Z",
+        "duration": 21,
+        "ipAddress": "192.168.1.27",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_17",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.629Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.27",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_18",
+    "name": "إكرام الحجوجي",
+    "email": "ikram.hajouji18@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثانية إعدادي",
+    "role": "student",
+    "xp": 529,
+    "streak": 3,
+    "lastLogin": "2026-05-31T19:20:07.940Z",
+    "loginCount": 12,
+    "totalTimeSpent": 225,
+    "attendanceRate": 87,
+    "progressPercentage": 79,
+    "activityLogs": [
+      {
+        "id": "log_init_18",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.629Z",
+        "duration": 28,
+        "ipAddress": "192.168.1.28",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_18",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.629Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.28",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_19",
+    "name": "يوسف أحميمصة",
+    "email": "youssef.ahmimsa19@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثانية إعدادي",
+    "role": "student",
+    "xp": 871,
+    "streak": 3,
+    "lastLogin": "2026-05-30T17:19:38.608Z",
+    "loginCount": 16,
+    "totalTimeSpent": 192,
+    "attendanceRate": 93,
+    "progressPercentage": 57,
+    "activityLogs": [
+      {
+        "id": "log_init_19",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.630Z",
+        "duration": 39,
+        "ipAddress": "192.168.1.29",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_19",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.630Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.29",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_20",
+    "name": "جميلة العرصاوي",
+    "email": "jamila.arsawi20@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثانية إعدادي",
+    "role": "student",
+    "xp": 1048,
+    "streak": 5,
+    "lastLogin": "2026-06-01T14:25:35.594Z",
+    "loginCount": 6,
+    "totalTimeSpent": 349,
+    "attendanceRate": 99,
+    "progressPercentage": 62,
+    "activityLogs": [
+      {
+        "id": "log_init_20",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.630Z",
+        "duration": 36,
+        "ipAddress": "192.168.1.30",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_20",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.630Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.30",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_21",
+    "name": "زينب كرومي",
+    "email": "zineb.karoumi21@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثالثة إعدادي",
+    "role": "student",
+    "xp": 782,
+    "streak": 4,
+    "lastLogin": "2026-06-01T11:55:41.499Z",
+    "loginCount": 11,
+    "totalTimeSpent": 146,
+    "attendanceRate": 97,
+    "progressPercentage": 64,
+    "activityLogs": [
+      {
+        "id": "log_init_21",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.631Z",
+        "duration": 14,
+        "ipAddress": "192.168.1.31",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_21",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.631Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.31",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_22",
+    "name": "لكبيرة أعربان",
+    "email": "lakbira.aerban22@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثالثة إعدادي",
+    "role": "student",
+    "xp": 514,
+    "streak": 3,
+    "lastLogin": "2026-05-31T19:13:11.645Z",
+    "loginCount": 13,
+    "totalTimeSpent": 93,
+    "attendanceRate": 80,
+    "progressPercentage": 61,
+    "activityLogs": [
+      {
+        "id": "log_init_22",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.631Z",
+        "duration": 31,
+        "ipAddress": "192.168.1.32",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_22",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.631Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.32",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_23",
+    "name": "ياسين صابر",
+    "email": "yassin.saber23@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثالثة إعدادي",
+    "role": "student",
+    "xp": 482,
+    "streak": 5,
+    "lastLogin": "2026-06-01T02:55:50.534Z",
+    "loginCount": 13,
+    "totalTimeSpent": 210,
+    "attendanceRate": 93,
+    "progressPercentage": 62,
+    "activityLogs": [
+      {
+        "id": "log_init_23",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.632Z",
+        "duration": 25,
+        "ipAddress": "192.168.1.33",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_23",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.632Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.33",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_24",
+    "name": "سعد المتوكل",
+    "email": "saad.motawakil24@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثالثة إعدادي",
+    "role": "student",
+    "xp": 1057,
+    "streak": 5,
+    "lastLogin": "2026-06-01T05:09:20.851Z",
+    "loginCount": 16,
+    "totalTimeSpent": 275,
+    "attendanceRate": 86,
+    "progressPercentage": 72,
+    "activityLogs": [
+      {
+        "id": "log_init_24",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.633Z",
+        "duration": 16,
+        "ipAddress": "192.168.1.34",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_24",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.633Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.34",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_25",
+    "name": "هجار الهواري",
+    "email": "hajar.houwari25@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثالثة إعدادي",
+    "role": "student",
+    "xp": 756,
+    "streak": 4,
+    "lastLogin": "2026-05-31T03:34:35.983Z",
+    "loginCount": 8,
+    "totalTimeSpent": 315,
+    "attendanceRate": 85,
+    "progressPercentage": 53,
+    "activityLogs": [
+      {
+        "id": "log_init_25",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.633Z",
+        "duration": 16,
+        "ipAddress": "192.168.1.35",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_25",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.633Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.35",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_26",
+    "name": "منى أرحى",
+    "email": "mona.arha26@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثالثة إعدادي",
+    "role": "student",
+    "xp": 273,
+    "streak": 2,
+    "lastLogin": "2026-05-31T00:39:42.763Z",
+    "loginCount": 17,
+    "totalTimeSpent": 315,
+    "attendanceRate": 83,
+    "progressPercentage": 73,
+    "activityLogs": [
+      {
+        "id": "log_init_26",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.634Z",
+        "duration": 39,
+        "ipAddress": "192.168.1.36",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_26",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.634Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.36",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_27",
+    "name": "آية تمسنا",
+    "email": "aya.temsna27@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثالثة إعدادي",
+    "role": "student",
+    "xp": 115,
+    "streak": 2,
+    "lastLogin": "2026-05-31T07:34:10.167Z",
+    "loginCount": 12,
+    "totalTimeSpent": 344,
+    "attendanceRate": 84,
+    "progressPercentage": 78,
+    "activityLogs": [
+      {
+        "id": "log_init_27",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.635Z",
+        "duration": 34,
+        "ipAddress": "192.168.1.37",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_27",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.635Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.37",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_28",
+    "name": "محمد الأمغاري",
+    "email": "mohamed.amghari28@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثالثة إعدادي",
+    "role": "student",
+    "xp": 902,
+    "streak": 5,
+    "lastLogin": "2026-05-31T00:09:24.824Z",
+    "loginCount": 14,
+    "totalTimeSpent": 314,
+    "attendanceRate": 89,
+    "progressPercentage": 52,
+    "activityLogs": [
+      {
+        "id": "log_init_28",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.635Z",
+        "duration": 29,
+        "ipAddress": "192.168.1.38",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_28",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.635Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.38",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_29",
+    "name": "حميد العلواني",
+    "email": "hamid.alwani29@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثالثة إعدادي",
+    "role": "student",
+    "xp": 173,
+    "streak": 4,
+    "lastLogin": "2026-05-31T15:56:37.410Z",
+    "loginCount": 11,
+    "totalTimeSpent": 156,
+    "attendanceRate": 90,
+    "progressPercentage": 66,
+    "activityLogs": [
+      {
+        "id": "log_init_29",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.636Z",
+        "duration": 25,
+        "ipAddress": "192.168.1.39",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_29",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.636Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.39",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "std_30",
+    "name": "أنس جنان",
+    "email": "anas.jnan30@edu.local",
+    "password": "$2b$10$capZzyq5mknuQLjrbhEYtOO3FxsZOtfZnjGTRlOpafpTvQZqnmqge",
+    "class": "الثالثة إعدادي",
+    "role": "student",
+    "xp": 1013,
+    "streak": 2,
+    "lastLogin": "2026-05-30T12:00:32.774Z",
+    "loginCount": 12,
+    "totalTimeSpent": 74,
+    "attendanceRate": 91,
+    "progressPercentage": 67,
+    "activityLogs": [
+      {
+        "id": "log_init_30",
+        "action": "تسجيل دخول",
+        "page": "/student-dashboard",
+        "timestamp": "2026-06-01T21:50:18.637Z",
+        "duration": 10,
+        "ipAddress": "192.168.1.40",
+        "device": "مكتب - ويندوز"
+      },
+      {
+        "id": "log_learn_30",
+        "action": "عرض درس الميزان الصرفي",
+        "page": "/courses",
+        "timestamp": "2026-06-01T23:00:18.637Z",
+        "duration": 15,
+        "ipAddress": "192.168.1.40",
+        "device": "جوال - أندرويد"
+      }
+    ],
+    "completedLessons": [
+      "morphological-scale"
+    ],
+    "completedAssignments": []
+  },
+  {
+    "id": "teacher_1",
+    "name": "الأستاذ صابر ياسين",
+    "email": "wadifamaroc60@gmail.com",
+    "password": "$2b$10$D8aGehpJyvwvSU.m6yGndeSWWyctMkj7h8yh.TYT5e9qmShs2XBL6",
+    "class": "منسق عام",
+    "role": "teacher",
+    "xp": 2500,
+    "streak": 15
+  },
+  {
+    "id": "admin_1",
+    "name": "المدير العام للمنصة",
+    "email": "admin@school.ma",
+    "password": "$2b$10$DJnwwlyQlDwQI/5ffvUT9eDBrEGw57wj5vfLmudgecu3hnsKWwl9W",
+    "class": "الإدارة",
+    "role": "admin",
+    "xp": 5000,
+    "streak": 30
+  }
+]

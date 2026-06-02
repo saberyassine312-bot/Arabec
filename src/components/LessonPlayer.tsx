@@ -24,6 +24,7 @@ import { AssessmentType } from '../lib/smartCorrector';
 import { QuizRegistration } from './QuizRegistration';
 import { InteractiveLesson } from './InteractiveLesson';
 import { cn } from '../lib/utils';
+import { KahootLtiEmbed } from './KahootLtiEmbed';
 
 import { useGamification } from '../hooks/useGamification';
 
@@ -425,6 +426,15 @@ export const LessonPlayer: React.FC = () => {
                 ) : (
                   <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm prose prose-emerald max-w-none">
                     <ReactMarkdown>{currentLesson?.content}</ReactMarkdown>
+                  </div>
+                )}
+
+                {currentLesson && (
+                  <div className="pt-6">
+                    <KahootLtiEmbed 
+                      lessonId={currentLesson.id} 
+                      lessonTitle={currentLesson.title} 
+                    />
                   </div>
                 )}
 

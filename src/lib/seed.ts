@@ -206,49 +206,71 @@ export const seedDatabase = async () => {
 
     // 5. Seed Students for 3rd Prep
     const studentsData = [
-      { fullName: 'منى مطهار', email: 'mona.matthar1@edu.local', accessCode: '3A-001', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'فاطمة الزهراء أعزيزي', email: 'fatimazahra.aazizi2@edu.local', accessCode: '3A-002', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'جهان البكرة', email: 'jihan.bakkra3@edu.local', accessCode: '3A-003', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'شيماء بالفقير', email: 'chaymae.balfakir4@edu.local', accessCode: '3A-004', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'سكينة حفيان', email: 'sakina.hafian5@edu.local', accessCode: '3A-005', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'حليمة كزيز', email: 'halima.kziz6@edu.local', accessCode: '3A-006', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'غزلان أفاريد', email: 'ghizlane.afarid7@edu.local', accessCode: '3A-007', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'حليمة اسماعيلي', email: 'halima.ismaili8@edu.local', accessCode: '3A-008', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'فاطمة الزهراء صاديق', email: 'fatimazahra.sadiq9@edu.local', accessCode: '3A-009', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'نورة عريف', email: 'noura.arif10@edu.local', accessCode: '3A-010', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'يوسف النكشاوي', email: 'youssef.nakchawi11@edu.local', accessCode: '3A-011', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'لبنى بقادير', email: 'lobna.bqadir12@edu.local', accessCode: '3A-012', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'يونس فكاك', email: 'younes.fekak13@edu.local', accessCode: '3A-013', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'سهام أخي', email: 'siham.akhi14@edu.local', accessCode: '3A-014', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'وداد البقالي', email: 'wadad.baqali15@edu.local', accessCode: '3A-015', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'محمد أزراولي', email: 'mohamed.azraouli16@edu.local', accessCode: '3A-016', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'فاطمة الزهراء أدميني', email: 'fatimazahra.admini17@edu.local', accessCode: '3A-017', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'إكرام الحجوجي', email: 'ikram.hajouji18@edu.local', accessCode: '3A-018', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'يوسف أحميمصة', email: 'youssef.ahmimsa19@edu.local', accessCode: '3A-019', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'جميلة العرصاوي', email: 'jamila.arsawi20@edu.local', accessCode: '3A-020', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'زينب كرومي', email: 'zineb.karoumi21@edu.local', accessCode: '3A-021', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'لكبيرة أعربان', email: 'lakbira.aerban22@edu.local', accessCode: '3A-022', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'ياسين صابر', email: 'yassin.saber23@edu.local', accessCode: '3A-023', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'سعد المتوكل', email: 'saad.motawakil24@edu.local', accessCode: '3A-024', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'هجار الهواري', email: 'hajar.houwari25@edu.local', accessCode: '3A-025', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'منى أرحى', email: 'mona.arha26@edu.local', accessCode: '3A-026', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'آية تمسنا', email: 'aya.temsna27@edu.local', accessCode: '3A-027', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'محمد الأمغاري', email: 'mohamed.amghari28@edu.local', accessCode: '3A-028', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'حميد العلواني', email: 'hamid.alwani29@edu.local', accessCode: '3A-029', classLevel: 'الثالثة إعدادي' },
-      { fullName: 'أنس جنان', email: 'anas.jnan30@edu.local', accessCode: '3A-030', classLevel: 'الثالثة إعدادي' }
+      { fullName: 'منى مطهار', email: 'mona.matthar1@edu.local', accessCode: '3A-001' },
+      { fullName: 'فاطمة الزهراء أعزيزي', email: 'fatimazahra.aazizi2@edu.local', accessCode: '3A-002' },
+      { fullName: 'جهان البكرة', email: 'jihan.bakkra3@edu.local', accessCode: '3A-003' },
+      { fullName: 'شيماء بالفقير', email: 'chaymae.balfakir4@edu.local', accessCode: '3A-004' },
+      { fullName: 'سكينة حفيان', email: 'sakina.hafian5@edu.local', accessCode: '3A-005' },
+      { fullName: 'حليمة كزيز', email: 'halima.kziz6@edu.local', accessCode: '3A-006' },
+      { fullName: 'غزلان أفاريد', email: 'ghizlane.afarid7@edu.local', accessCode: '3A-007' },
+      { fullName: 'حليمة اسماعيلي', email: 'halima.ismaili8@edu.local', accessCode: '3A-008' },
+      { fullName: 'فاطمة الزهراء صاديق', email: 'fatimazahra.sadiq9@edu.local', accessCode: '3A-009' },
+      { fullName: 'نورة عريف', email: 'noura.arif10@edu.local', accessCode: '3A-010' },
+      { fullName: 'يوسف النكشاوي', email: 'youssef.nakchawi11@edu.local', accessCode: '3A-011' },
+      { fullName: 'لبنى بقادير', email: 'lobna.bqadir12@edu.local', accessCode: '3A-012' },
+      { fullName: 'يوسف فكاك', email: 'youssef.fkak13@edu.local', accessCode: '3A-013' },
+      { fullName: 'سهام أخي', email: 'siham.akhi14@edu.local', accessCode: '3A-014' },
+      { fullName: 'وداد البقالي', email: 'wadad.baqali15@edu.local', accessCode: '3A-015' },
+      { fullName: 'محمد أزراولي', email: 'mohamed.azraouli16@edu.local', accessCode: '3A-016' },
+      { fullName: 'فاطمة الزهراء أدميني', email: 'fatimazahra.admini17@edu.local', accessCode: '3A-017' },
+      { fullName: 'إكرام الحجوجي', email: 'ikram.hajouji18@edu.local', accessCode: '3A-018' },
+      { fullName: 'يوسف أحميمصة', email: 'youssef.ahmimsa19@edu.local', accessCode: '3A-019' },
+      { fullName: 'جميلة العرصاوي', email: 'jamila.arsawi20@edu.local', accessCode: '3A-020' },
+      { fullName: 'زينب كرومي', email: 'zineb.karoumi21@edu.local', accessCode: '3A-021' },
+      { fullName: 'لكبيرة أعربان', email: 'lakbira.aerban22@edu.local', accessCode: '3A-022' },
+      { fullName: 'ياسين صابر', email: 'yassin.saber23@edu.local', accessCode: '3A-023' },
+      { fullName: 'سعد المتوكل', email: 'saad.motawakil24@edu.local', accessCode: '3A-024' },
+      { fullName: 'هجار الهواري', email: 'hajar.houwari25@edu.local', accessCode: '3A-025' },
+      { fullName: 'منى أرحى', email: 'mona.arha26@edu.local', accessCode: '3A-026' },
+      { fullName: 'آية تمسنا', email: 'aya.temsna27@edu.local', accessCode: '3A-027' },
+      { fullName: 'محمد الأمغاري', email: 'mohamed.amghari28@edu.local', accessCode: '3A-028' },
+      { fullName: 'حميد العلواني', email: 'hamid.alwani29@edu.local', accessCode: '3A-029' },
+      { fullName: 'أنس جنان', email: 'anas.jnan30@edu.local', accessCode: '3A-030' }
     ];
 
-    for (const student of studentsData) {
-      // Use accessCode as document ID for uniqueness and consistency
+    for (let idx = 0; idx < studentsData.length; idx++) {
+      const student = studentsData[idx];
+      const num = idx + 1;
+      let classLevel = 'الأولى إعدادي';
+      if (num >= 11 && num <= 20) {
+        classLevel = 'الثانية إعدادي';
+      } else if (num >= 21) {
+        classLevel = 'الثالثة إعدادي';
+      }
+
+      // Populate students collection
       await setDoc(doc(db, 'students', student.accessCode), {
-        ...student,
+        fullName: student.fullName,
+        email: student.email,
+        accessCode: student.accessCode,
+        classLevel,
+        createdAt: serverTimestamp()
+      }, { merge: true });
+
+      // Populate users collection to enable login and dashboards
+      await setDoc(doc(db, 'users', student.accessCode), {
+        displayName: student.fullName,
+        email: student.email,
+        orderNumber: student.accessCode,
+        gradeLevel: classLevel,
+        role: 'student',
         createdAt: serverTimestamp()
       }, { merge: true });
     }
 
     return true;
   } catch (error) {
-    console.error("Error seeding database:", error);
+    console.warn("Error seeding database:", error);
     return false;
   }
 };

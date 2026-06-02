@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react
 import { useState, useEffect } from 'react';
 import { auth, db } from './lib/firebase';
 import { onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot, collection, getDocs } from 'firebase/firestore';
 import { BookOpen, Play, CheckCircle, User, LogIn, LogOut, Layout, Video, Award, Menu, X, ChevronDown, ChevronLeft, ArrowRight, Clock, Target, GraduationCap, AlertCircle, Sun, Star, Lightbulb, Layers, BookCheck, Sparkles, Compass, Type, PenTool, Scale, Wind, History, MessageSquare, Sword, Gamepad2, Zap, Flame, LayoutDashboard, BookMarked, Brain, Users, Activity, Trophy, Database, BarChart3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from './lib/utils';
@@ -62,6 +62,8 @@ import { MorphologyModal } from './components/MorphologyModal';
 import { SpellingModal } from './components/SpellingModal';
 import { ArabicGamesCollection } from './components/ArabicGamesCollection';
 import { DashboardLayout } from './components/modern/DashboardLayout';
+import { MadrasaNetLogo } from './components/modern/MadrasaNetLogo';
+import { DiscussionForum } from './components/modern/DiscussionForum';
 import { ModernUserDashboard } from './components/modern/ModernUserDashboard';
 import { ModernAdminDashboard } from './components/modern/ModernAdminDashboard';
 import { ModernTeacherDashboard } from './components/modern/ModernTeacherDashboard';
@@ -82,6 +84,9 @@ import PrepYearsSelection from './components/PrepYearsSelection';
 import AdvancedArabicQuiz from './components/AdvancedArabicQuiz';
 import { RegionalExamAdventure } from './components/RegionalExamAdventure';
 import GrammarSmartPath from './components/GrammarSmartPath';
+import { SchoolProvider } from './context/SchoolContext';
+import { SmartSchoolDashboard } from './components/modern/SmartSchoolDashboard';
+import { AdminPortalWrapper } from './components/modern/AdminPortalWrapper';
 
 import { handleFirestoreError, OperationType } from './lib/firestoreUtils';
 
@@ -122,11 +127,7 @@ const Navbar = ({ user, loading }: { user: any; loading: boolean }) => {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-emerald-200">ل</div>
-              <div className="flex flex-col">
-                <span className="text-2xl font-black text-gray-900 leading-none">لغتي</span>
-                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mt-1">منصة التعلم الذكي</span>
-              </div>
+              <MadrasaNetLogo size="md" showTagline={false} />
             </Link>
           </div>
 
@@ -351,7 +352,7 @@ const Home = ({ user }: { user: any }) => {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-5xl md:text-7xl font-black text-gray-900 mb-6 leading-[1.1]"
               >
-                منصة لغتي <br />
+                منصة MadrasaNet <br />
                 <span className="text-emerald-600">مستقبلك يبدأ هنا</span>
               </motion.h1>
               <motion.p 
@@ -543,7 +544,7 @@ const Home = ({ user }: { user: any }) => {
       {/* Features Bento Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-black text-gray-900 mb-4">لماذا تختار منصة لغتي؟</h2>
+          <h2 className="text-4xl font-black text-gray-900 mb-4">لماذا تختار منصة MadrasaNet؟</h2>
           <p className="text-gray-500 text-lg">نقدم تجربة تعليمية فريدة تجمع بين العلم والمتعة</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -1313,11 +1314,39 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if courses are empty in Firestore (publicly readable) and run auto-seeder to ensure first-time startup seeding
+    const checkAndSeed = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'courses'));
+        if (querySnapshot.empty) {
+          if (auth.currentUser?.email === 'wadifamaroc60@gmail.com') {
+            console.log('No courses found in Firestore. Triggering automatic startup student database seeding for Admin...');
+            await seedDatabase();
+          } else {
+            console.log('No courses found in Firestore. Seeding will run when Admin logs in.');
+          }
+        }
+      } catch (err) {
+        console.warn('Startup check/seeding failed or skipped:', err);
+      }
+    };
+    checkAndSeed();
+  }, [user]);
+
+  useEffect(() => {
+    let unsubscribeProfile: (() => void) | null = null;
+
     const unsubscribeAuth = onAuthStateChanged(auth, (u) => {
+      // Unsubscribe from any previous profile listener immediately
+      if (unsubscribeProfile) {
+        unsubscribeProfile();
+        unsubscribeProfile = null;
+      }
+
       if (u) {
         setUser(u);
         // Listen to user profile changes
-        const unsubscribeProfile = onSnapshot(doc(db, 'users', u.uid), (snapshot) => {
+        unsubscribeProfile = onSnapshot(doc(db, 'users', u.uid), (snapshot) => {
           if (snapshot.exists()) {
             setUserProfile(snapshot.data());
           } else {
@@ -1325,16 +1354,24 @@ export default function App() {
           }
           setLoading(false);
         }, (error) => {
-          handleFirestoreError(error, OperationType.GET, `users/${u.uid}`);
+          // Only handle error if we are still authenticated and supposed to be listening
+          if (auth.currentUser) {
+            handleFirestoreError(error, OperationType.GET, `users/${u.uid}`);
+          }
         });
-        return () => unsubscribeProfile();
       } else {
         setUser(null);
         setUserProfile(null);
         setLoading(false);
       }
     });
-    return () => unsubscribeAuth();
+
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeProfile) {
+        unsubscribeProfile();
+      }
+    };
   }, []);
 
   if (loading) {
@@ -1345,6 +1382,15 @@ export default function App() {
     );
   }
 
+  const isAdminPortal = typeof window !== 'undefined' && (
+    window.location.pathname.startsWith('/admin-portal') || 
+    window.location.pathname.startsWith('/admin-dashboard-new')
+  );
+
+  if (isAdminPortal) {
+    return <AdminPortalWrapper />;
+  }
+
   // If not logged in, show login page
   if (!user) {
     return <LoginPage onLoginSuccess={() => {}} />;
@@ -1352,48 +1398,52 @@ export default function App() {
 
   return (
     <Router>
-      <DashboardLayout user={user}>
-        <Routes>
-          <Route path="/" element={<Home user={user} />} />
-          <Route path="/courses" element={<CourseList />} />
-          <Route path="/course/:courseId" element={<CourseDetail />} />
-          <Route path="/course/:courseId/learn" element={<LessonPlayer />} />
-          <Route path="/certificate/:courseId" element={<CertificateView />} />
-          <Route path="/lessons" element={<Lessons />} />
-          <Route path="/exercises" element={<Exercises />} />
-          <Route path="/composition" element={<ArabicComposition />} />
-          <Route path="/whiteboard" element={<Whiteboard />} />
-          <Route path="/first-year-course" element={<FirstYearArabicCourse />} />
-          <Route path="/levels" element={<LevelSelection />} />
-          <Route path="/prep-years" element={<PrepYearsSelection />} />
-          <Route path="/advanced-quiz" element={<AdvancedArabicQuiz />} />
-          <Route path="/first-year-lms" element={<ArabicLMSFirstYear />} />
-          <Route path="/second-year-lms" element={<ArabicLMSSecondYear />} />
-          <Route path="/third-year-lms" element={<ArabicLMSThirdYear />} />
-          <Route path="/third-prep-dashboard" element={<ThirdPrepDashboard />} />
-          <Route path="/seed-data" element={<DataSeeder />} />
-          <Route path="/smart-admin" element={<SmartAdminPanel />} />
-          <Route path="/parsing-adventure" element={<ParsingCourse />} />
-          <Route path="/game-arena" element={<GameArena />} />
-          <Route path="/linguistic-games" element={<ArabicGamesCollection />} />
-          <Route path="/regional-adventure" element={<RegionalExamAdventure />} />
-          <Route path="/grammar-smart-path" element={<GrammarSmartPath />} />
-          <Route path="/live-interviews" element={<LiveInterviews userRole={user?.email === 'wadifamaroc60@gmail.com' ? 'teacher' : 'student'} />} />
-          <Route path="/remote-communication" element={<RemoteCommunicationDashboard user={user} />} />
-          <Route path="/student-dashboard" element={<ModernUserDashboard />} />
-          <Route path="/lessons/dual" element={<DualLesson />} />
-          <Route path="/interactive-lesson" element={<InteractiveLessonWrapper />} />
-          <Route path="/interactive/calligraphy" element={<CalligraphyInteractiveLesson />} />
-          <Route path="/live" element={<LiveRedirect />} />
-          <Route path="/dashboard" element={user?.role === 'admin' || user?.email === 'wadifamaroc60@gmail.com' ? <ModernAdminDashboard /> : <ModernUserDashboard />} />
-          <Route path="/teacher-dashboard" element={<ModernTeacherDashboard />} />
-          <Route path="/admin/lessons" element={<LessonManager />} />
-          <Route path="/admin/teachers" element={<TeacherManager />} />
-          <Route path="/admin/students" element={<StudentManager />} />
-          <Route path="/admin/insights" element={<LearnerInsights />} />
-          <Route path="/admin/stats" element={<ModernAdminDashboard />} />
-        </Routes>
-      </DashboardLayout>
+      <SchoolProvider>
+        <DashboardLayout user={user}>
+          <Routes>
+            <Route path="/" element={<Home user={user} />} />
+            <Route path="/courses" element={<CourseList />} />
+            <Route path="/course/:courseId" element={<CourseDetail />} />
+            <Route path="/course/:courseId/learn" element={<LessonPlayer />} />
+            <Route path="/certificate/:courseId" element={<CertificateView />} />
+            <Route path="/lessons" element={<Lessons />} />
+            <Route path="/exercises" element={<Exercises />} />
+            <Route path="/composition" element={<ArabicComposition />} />
+            <Route path="/whiteboard" element={<Whiteboard />} />
+            <Route path="/first-year-course" element={<FirstYearArabicCourse />} />
+            <Route path="/levels" element={<LevelSelection />} />
+            <Route path="/prep-years" element={<PrepYearsSelection />} />
+            <Route path="/advanced-quiz" element={<AdvancedArabicQuiz />} />
+            <Route path="/first-year-lms" element={<ArabicLMSFirstYear />} />
+            <Route path="/second-year-lms" element={<ArabicLMSSecondYear />} />
+            <Route path="/third-year-lms" element={<ArabicLMSThirdYear />} />
+            <Route path="/third-prep-dashboard" element={<ThirdPrepDashboard />} />
+            <Route path="/seed-data" element={<DataSeeder />} />
+            <Route path="/smart-admin" element={<SmartAdminPanel />} />
+            <Route path="/parsing-adventure" element={<ParsingCourse />} />
+            <Route path="/game-arena" element={<GameArena />} />
+            <Route path="/linguistic-games" element={<ArabicGamesCollection />} />
+            <Route path="/regional-adventure" element={<RegionalExamAdventure />} />
+            <Route path="/grammar-smart-path" element={<GrammarSmartPath />} />
+            <Route path="/live-interviews" element={<LiveInterviews userRole={user?.email === 'wadifamaroc60@gmail.com' ? 'teacher' : 'student'} />} />
+            <Route path="/remote-communication" element={<RemoteCommunicationDashboard user={user} />} />
+            <Route path="/student-dashboard" element={<ModernUserDashboard />} />
+            <Route path="/lessons/dual" element={<DualLesson />} />
+            <Route path="/interactive-lesson" element={<InteractiveLessonWrapper />} />
+            <Route path="/interactive/calligraphy" element={<CalligraphyInteractiveLesson />} />
+            <Route path="/live" element={<LiveRedirect />} />
+            <Route path="/dashboard" element={user?.role === 'admin' || user?.email === 'wadifamaroc60@gmail.com' ? <ModernAdminDashboard /> : <ModernUserDashboard />} />
+            <Route path="/teacher-dashboard" element={<ModernTeacherDashboard />} />
+            <Route path="/admin/lessons" element={<LessonManager />} />
+            <Route path="/admin/teachers" element={<TeacherManager />} />
+            <Route path="/admin/students" element={<StudentManager />} />
+            <Route path="/admin/insights" element={<LearnerInsights />} />
+            <Route path="/admin/stats" element={<ModernAdminDashboard />} />
+            <Route path="/school-lms" element={<SmartSchoolDashboard />} />
+            <Route path="/forums" element={<DiscussionForum />} />
+          </Routes>
+        </DashboardLayout>
+      </SchoolProvider>
     </Router>
   );
 }
